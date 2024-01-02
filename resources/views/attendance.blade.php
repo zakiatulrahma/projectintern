@@ -10,11 +10,302 @@
   data-template="vertical-menu-template"
 >
   <head>
+    <script src="{{ asset("assets/vendor/libs/jquery/jquery.js") }}"></script>
+    <script>
+      var attendance_pria = @json($attendance_pria);
+      var attendance_wanita = @json($attendance_wanita);
+      var absence_pria =@json($absence_pria);
+      var absence_wanita =@json($absence_wanita);
+      var directorat_it_attend =@json($directorat_it_attend);
+      var directorat_finance_attend =@json($directorat_finance_attend);
+      var directorat_marketing_attend =@json($directorat_marketing_attend);
+      var division_sa_attend =@json($division_sa_attend);
+      var division_dpi_attend =@json($division_dpi_attend);
+      var division_operation_attend =@json($division_operation_attend);
+      var education_diploma =0;
+      var education_S1 =0;
+      var education_S2 =0;
+      var education_S3 =0;
+      var directorat_it_comp =0;
+      var directorat_finance_comp =0;
+      var directorat_marketing_comp =0;
+      var division_dpi_comp =0;
+      var division_sa_comp =0;
+      var division_operation_comp =0;
+      var kurang20 =0;
+      var dari21_25 =0;
+      var dari26_30 =0;
+      var dari31_35 =0;
+      var dari36_40 =0;
+      var dari41_45 =0;
+      var dari46_50 =0;
+      var lebih50 =0;
+      var attendanceCheckIn =@json($attendanceCheckIn);
+      var attendanceLateIn =@json($attendanceLateIn);
+      var attendanceAbsent =@json($attendanceAbsent);
+      var attendanceNocheckIn =@json($attendanceNocheckIn);
+      var attendanceTimeOff =@json($attendanceTimeOff);
+      var attendanceDate =@json($attendanceDate);
+      
+      $(document).ready(function(){
+        $('#html5-month-input').change(function(){
+          var selectedDate = $(this).val();
+          window.location.href = '/dashboard' + selectedDate;
+        });
+      });
+
+      function updateChart(data){
+        const doughnutChartKehadiran2 = document.getElementById('doughnutChartKehadiran2');
+  if (doughnutChartKehadiran2) {
+    const doughnutChartVar = new Chart(doughnutChartKehadiran2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pria','Wanita'],
+        datasets: [
+          {
+            data: [attendance_pria, attendance_wanita],
+            backgroundColor: [cyanColor, orangeLightColor, config.colors.primary],
+            borderWidth: 0,
+            pointStyle: 'rectRounded'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio : true,
+        aspectRatio : 1.2,
+        animation: {
+          duration: 500
+        },
+        cutout: '68%',
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const label = context.labels || '',
+                  value = context.parsed;
+                const output = ' ' + label + ' : ' + value + '';
+                return output;
+              }
+            },
+            // Updated default tooltip UI
+            rtl: isRtl,
+            backgroundColor: config.colors.white,
+            titleColor: config.colors.black,
+            bodyColor: config.colors.black,
+            borderWidth: 1,
+            borderColor: borderColor
+          }
+        }
+      }
+    });
+  }
+      }
+
+      const analyticsBarChartElDirectorat= document.querySelector('#analyticsBarChartDirectorat'),
+    analyticsBarChartConfigDirectorat = {
+      chart: {
+        height: 310,
+        type: 'bar',
+        toolbar: {
+          show: false
+        }
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '20%',
+          borderRadius: 3,
+          startingShape: 'rounded'
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      colors: [config.colors.primary, config.colors_label.primary],
+      series: [
+        {
+          name: '2023',
+          data: [directorat_it_attend, directorat_finance_attend, directorat_marketing_attend]
+        }
+      ],
+      grid: {
+        borderColor: borderColor,
+        padding: {
+          bottom: -8
+        }
+      },
+      xaxis: {
+        categories: ['Directorat IT', 'Directorat Finance', 'Directorat Marketing'],
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        labels: {
+          style: {
+            colors: axisColor
+          }
+        }
+      },
+      yaxis: {
+        min: 0,
+        max: 10,
+        tickAmount: 3,
+        labels: {
+          style: {
+            colors: axisColor
+          }
+        }
+      },
+      legend: {
+        show: false
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return '' + val + ' ';
+          }
+        }
+      }
+    };
+  if (typeof analyticsBarChartElDirectorat !== undefined && analyticsBarChartElDirectorat !== null) {
+    const analyticsBarChartDirectorat= new ApexCharts(analyticsBarChartElDirectorat, analyticsBarChartConfigDirectorat);
+    analyticsBarChartDirectorat.render();
+  }
+
+  const doughnutChartAttendanceGender = document.getElementById('doughnutChartAttendanceGender');
+  if (doughnutChartAttendanceGender) {
+    const doughnutChartVar = new Chart(doughnutChartAttendanceGender, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pria','Wanita'],
+        datasets: [
+          {
+            data: [absence_pria,absence_wanita],
+            backgroundColor: [cyanColor, orangeLightColor, config.colors.primary],
+            borderWidth: 0,
+            pointStyle: 'rectRounded'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio : true,
+        aspectRatio : 1.2,
+        animation: {
+          duration: 500
+        },
+        cutout: '68%',
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const label = context.labels || '',
+                  value = context.parsed;
+                const output = ' ' + label + ' : ' + value + ' ';
+                return output;
+              }
+            },
+            // Updated default tooltip UI
+            rtl: isRtl,
+            backgroundColor: config.colors.white,
+            titleColor: config.colors.black,
+            bodyColor: config.colors.black,
+            borderWidth: 1,
+            borderColor: borderColor
+          }
+        }
+      }
+    });
+  }
+
+  const analyticsBarChartElDivision= document.querySelector('#analyticsBarChartDivision'),
+    analyticsBarChartConfigDivision= {
+      chart: {
+        height: 310,
+        type: 'bar',
+        toolbar: {
+          show: false
+        }
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '20%',
+          borderRadius: 3,
+          startingShape: 'rounded'
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      colors: [config.colors.primary, config.colors_label.primary],
+      series: [
+        {
+          name: '2020',
+          data: [division_sa_attend, division_dpi_attend, division_operation_attend]
+        }
+      ],
+      grid: {
+        borderColor: borderColor,
+        padding: {
+          bottom: -8
+        }
+      },
+      xaxis: {
+        categories: ['Division SA', 'Division DPI', 'Division Operation'],
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        labels: {
+          style: {
+            colors: axisColor
+          }
+        }
+      },
+      yaxis: {
+        min: 0,
+        max: 10,
+        tickAmount: 3,
+        labels: {
+          style: {
+            colors: axisColor
+          }
+        }
+      },
+      legend: {
+        show: false
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return '$ ' + val + ' thousands';
+          }
+        }
+      }
+    };
+  if (typeof analyticsBarChartElDivision !== undefined && analyticsBarChartElDivision !== null) {
+    const analyticsBarChartDivision= new ApexCharts(analyticsBarChartElDivision, analyticsBarChartConfigDivision);
+    analyticsBarChartDivision.render();
+  }
+
+  </script>
+  
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
     <title>Dashboard</title>
 
@@ -50,7 +341,7 @@
     <!-- Page CSS -->
 
     <!-- Helpers -->
-
+    <script src="{{ asset("assets/vendor/js/helpers.js") }}"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
@@ -60,6 +351,11 @@
   </head>
 
   <body>
+    {{-- <div id="doughnutChartKehadiran2"></div>
+    <div id="analyticsBarChartDirectorat"></div>
+    <div id="doughnutChartAttendanceGender"></div>
+    <div id="analyticsBarChartDivision"></div> --}}
+
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
@@ -117,7 +413,7 @@
                   </g>
                 </svg>
               </span>
-              <span class="app-brand-text demo menu-text fw-bold ms-2">Frest</span>
+              <span class="app-brand-text demo menu-text fw-bold ms-2">Dashboard</span>
             </a>
 
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -132,18 +428,17 @@
 
           <ul class="menu-inner py-1">
 
-
             <!-- Dashboards -->
-            <li class="menu-item active open">
-              <a href="javascript:void(0);" class="menu-link">
+            <li class="menu-item ">
+              <a href="{{ route('dashboard') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Dashboards">Dashboards</div>
+                <div data-i18n="Company">Company</div>
               </a>
             </li>
 
-            <!-- Layouts -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link">
+            <!-- Attendance -->
+            <li class="menu-item active open">
+              <a href="{{ route('attendance') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-layout"></i>
                 <div data-i18n="Attendance">Attendance</div>
               </a>
@@ -154,14 +449,13 @@
 
         <!-- Layout container -->
         <div class="layout-page">
-         
 
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
 
             <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="mb-3 row">
+                <div class="mb-0 row">
                     <div class="col-md-8">
                       <h4 class="py-3 breadcrumb-wrapper mb-4">
                         <span class="text-muted fw-light">Dashboard/</span> Attendance
@@ -169,42 +463,59 @@
                     </div>
                     <div class="col-md-4">
                       <div class="mb-3">
-                        <input class="form-control" type="date" value="2021-06-18" id="html5-month-input"/>
+                        <input class="form-control" type="date" value="{{ $datenewdata }}" id="html5-month-input"/>
                       </div>
                     </div>
                   </div>
 
                 <!-- Cards Draggable -->
                 <div class="row mb-4" id="sortable-cards">
-                <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="col-lg-2 col-md-6 col-sm-12">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h5>Total Employee</h5>
-                      <h4>180</h4>
+                      <h6>Headcount</h6>
+                      <h4>{{ $total_employees }}</h4>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-12 ">
+                <div class="col-lg-2 col-md-6 col-sm-12 ">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h5>On Time</h5>
-                      <h4>170</h4>
+                      <h6>On Time</h6>
+                      <h4>{{ $on_time }}</h4>
+                    </div>
+                    {{-- on_time variable nya, --}}
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                  <div class="card drag-item cursor-move mb-lg-0 mb-4">
+                    <div class="card-body text-center">
+                      <h6>Late In</h6>
+                      <h4>{{ $lateInAttendances }}</h4>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="col-lg-2 col-md-6 col-sm-12">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h5>Late</h5>
-                      <h4>12</h4>
+                      <h6>No Check In</h6>
+                      <h4>{{ $nocheckin }}</h4>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="col-lg-2 col-md-6 col-sm-12">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h5>No CheckIn</h5>
-                      <h4>8</h4>
+                      <h6>Absen</h6>
+                      <h4>{{ $absenceCount }}</h4>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                  <div class="card drag-item cursor-move mb-lg-0 mb-4">
+                    <div class="card-body text-center">
+                      <h6>Time Off</h6>
+                      <h4>{{  $timeoff }}</h4>
                     </div>
                   </div>
                 </div>
@@ -212,10 +523,11 @@
                 <!-- /Cards Draggable ends -->
 
                 <!-- Bar Chart -->
+                <div class="row mb-4" id="sortable-cards">
                 <div class="col-12">
                     <div class="card">
                       <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
-                        <h5 class="card-title mb-0">Catatan Kehadiran</h5>
+                        <h5 class="card-title mb-0">Attendance Record</h5>
                         <div class="dropdown">
                           <button
                             type="button"
@@ -257,42 +569,98 @@
                         </div>
                       </div>
                       <div class="card-body">
-                        <div id="barChart"></div>
+                        <div id="barChartKehadiran2"></div>
                       </div>
                     </div>
                   </div>
-                  <!-- /Bar Chart -->
+                <!-- /Bar Chart -->
 
-                  
                 <!-- Doughnut Chart -->
                 <div class="col-lg-4 col-12 mt-4">
                     <div class="card">
-                      <h5 class="card-header">Ketidakhadiran Gender</h5>
+                      <h5 class="card-header">Attendance by Gender</h5>
                       <div class="card-body">
-                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="350"></canvas>
+                        <canvas id="doughnutChartKehadiran2" class="chartjs mb-4" data-height="350"></canvas>
                         <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
                           <li class="ct-series-0 d-flex flex-column">
                             <h5 class="mb-0 fw-bold">Pria</h5>
                             <span
                               class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"
+                              style="background-color: #28dac6; width: 35px; height: 6px"
                             ></span>
-                            <div class="text-muted">45%</div>
+                            <div class="text-muted">{{ $percent_pria }}%</div>
                           </li>
                           <li class="ct-series-1 d-flex flex-column">
                             <h5 class="mb-0 fw-bold">Wanita</h5>
                             <span
-                              class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"
-                            ></span>
-                            <div class="text-muted">65%</div>
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #FDAC34; width: 35px; height: 6px"
+                          ></span>
+                            <div class="text-muted">{{ $percent_wanita }}%</div>
                           </li>
                         </ul>
                       </div>
                     </div>
                   </div>
-                  <!-- /Doughnut Chart -->
-                
+                <!-- /Doughnut Chart -->
+
+                <!-- Website Analytics-->
+                <div class="col-lg-8 mt-4 col-md-12">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="card-title mb-0">Attendance by Directorate</h5>
+                      <div class="dropdown">
+                    </div>
+                    </div>
+                    <div class="card-body pb-2">
+                      <div id="analyticsBarChartDirectorat"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Doughnut Chart -->
+                <div class="col-lg-4 col-12 mt-4">
+                  <div class="card">
+                    <h5 class="card-header">Absence by Gender</h5>
+                    <div class="card-body">
+                      <canvas id="doughnutChartAttendanceGender" class="chartjs mb-4" data-height="350"></canvas>
+                      <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
+                        <li class="ct-series-0 d-flex flex-column">
+                          <h5 class="mb-0 fw-bold">Pria</h5>
+                          <span
+                          class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                          style="background-color: #28dac6; width: 35px; height: 6px"
+                        ></span>
+                          <div class="text-muted">{{ $percent_absencepria }}%</div>
+                        </li>
+                        <li class="ct-series-1 d-flex flex-column">
+                          <h5 class="mb-0 fw-bold">Wanita</h5>
+                          <span
+                          class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                          style="background-color: #FDAC34; width: 35px; height: 6px"
+                        ></span>
+                          <div class="text-muted">{{  $percent_absencewanita }}%</div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Doughnut Chart -->
+
+                <!-- Website Analytics-->
+                <div class="col-lg-8 mt-4 col-md-12">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="card-title mb-0">Attendance by Division</h5>
+                      <div class="dropdown">
+                    </div>
+                    </div>
+                    <div class="card-body pb-2">
+                      <div id="analyticsBarChartDivision"></div>
+                    </div>
+                  </div>
+                </div>
+
             </div>
             <!-- / Content -->
             <div class="content-backdrop fade"></div>
@@ -312,32 +680,36 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    
+    <script src="{{ asset("assets/vendor/libs/popper/popper.js") }}"></script>
+    <script src="{{ asset("assets/vendor/js/bootstrap.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js") }}"></script>
 
-    <script src="../../assets/vendor/libs/hammer/hammer.js"></script>
+    <script src="{{ asset("assets/vendor/libs/hammer/hammer.js") }}"></script>
 
-    <script src="../../assets/vendor/libs/i18n/i18n.js"></script>
-    <script src="../../assets/vendor/libs/typeahead-js/typeahead.js"></script>
+    <script src="{{ asset("assets/vendor/libs/i18n/i18n.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/typeahead-js/typeahead.js") }}"></script>
 
-    <script src="../../assets/vendor/js/menu.js"></script>
+    <script src="{{ asset("assets/vendor/js/menu.js") }}"></script>
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="../../assets/vendor/libs/cleavejs/cleave.js"></script>
-    <script src="../../assets/vendor/libs/cleavejs/cleave-phone.js"></script>
-    <script src="../../assets/vendor/libs/moment/moment.js"></script>
-    <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-    <script src="../../assets/vendor/libs/select2/select2.js"></script>
-    
+    <script src="{{ asset("assets/vendor/libs/cleavejs/cleave.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/cleavejs/cleave-phone.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/moment/moment.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/flatpickr/flatpickr.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/select2/select2.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/chartjs/chartjs.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/apex-charts/apexcharts.js") }}"></script>
 
     <!-- Main JS -->
-    <script src="../../assets/js/main.js"></script>
+    <script src="{{ asset("assets/js/main.js") }}"></script>
 
     <!-- Page JS -->
-    <script src="../../assets/js/form-layouts.js"></script>
+    <script src="{{ asset("assets/js/form-layouts.js") }}"></script>
+    <script src="{{ asset("assets/js/charts-chartjs.js") }}"></script>
+    <script src="{{ asset("assets/js/charts-apex.js") }}"></script>  
+    <script src="{{ asset("assets/js/dashboards-analytics.js") }}"></script>
     
   </body>
 </html>

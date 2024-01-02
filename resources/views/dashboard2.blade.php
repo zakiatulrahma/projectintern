@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html
@@ -10,15 +9,634 @@
   data-template="vertical-menu-template"
 >
   <head>
-    <meta charset="utf-8" />
+    <script src="{{ asset("assets/vendor/libs/jquery/jquery.js") }}"></script>
+    <script>
+      var employee_pria = @json($employee_pria);
+      var employee_wanita = @json($employee_wanita);
+      var timeoff_cuti =@json($timeoff_cuti);
+      var timeoff_izin =@json($timeoff_izin);
+      var timeoff_lainnya =@json($timeoff_lainnya);
+      var education_diploma =@json($education_diploma);
+      var education_S1 =@json($education_S1);
+      var education_S2 =@json($education_S2);
+      var education_S3 =@json($education_S3);
+      var jobstatus_tetap =@json($jobstatus_tetap);
+      var jobstatus_pkwt =@json($jobstatus_pkwt);
+      var placeofbirth_jakarta =@json($placeofbirth_jakarta);
+      var placeofbirth_bandung =@json($placeofbirth_bandung);
+      var placeofbirth_padang =@json($placeofbirth_padang);
+      var placeofbirth_lainnya =@json($placeofbirth_lainnya);
+      var directorat_it_comp =@json($directorat_it_comp);
+      var directorat_finance_comp =@json($directorat_finance_comp);
+      var directorat_marketing_comp =@json($directorat_marketing_comp);
+      var division_dpi_comp =@json($division_dpi_comp);
+      var division_sa_comp =@json($division_sa_comp);
+      var division_operation_comp =@json($division_operation_comp);
+      var kurang20 =@json($kurang20);
+      var dari21_25 =@json($dari21_25);
+      var dari26_30 =@json($dari26_30);
+      var dari31_35 =@json($dari31_35);
+      var dari36_40 =@json($dari36_40);
+      var dari41_45 =@json($dari41_45);
+      var dari46_50 =@json($dari46_50);
+      var lebih50 =@json($lebih50);
+      var attendanceCheckIn =0;
+      var attendanceLateIn =0;
+      var attendanceAbsent =0;
+      var attendanceNocheckIn =0;
+      var attendanceTimeOff =0;
+      var attendanceDate =0;
+
+      $(document).ready(function(){
+        $('#html5-month-input').change(function(){
+          var selectedMonth = $(this).val();
+          var url = "{{ route('dashboard', ['date' => ':date']) }}";
+            url = url.replace(':date', selectedMonth);
+            window.location.href = url;
+        });
+      });
+    //   $(document).ready(function(){
+    // $('#html5-month-input').change(function(){
+    //     var selectedMonth = $(this).val();
+    //     var url = '{{ route('dashboard', ['date' => ':selectedMonth']) }}';
+    //     url = url.replace(':selectedMonth', selectedMonth);
+    //     window.location.href = url;
+    // });
+
+// });
+
+
+      function updateChart2(data){
+          const analyticsBarChartElDirectoratCompany = document.querySelector('#analyticsBarChartDirectoratCompany'),
+          analyticsBarChartConfigDirectoratCompany = {
+            chart: {
+              height: 250,
+              type: 'bar',
+              toolbar: {
+                show: false
+              }
+            },
+            plotOptions: {
+              bar: {
+                horizontal: false,
+                columnWidth: '20%',
+                borderRadius: 3,
+                startingShape: 'rounded'
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            colors: [config.colors.primary, config.colors_label.primary],
+            series: [
+              {
+                name: 'Total Karyawan',
+                data: [directorat_it_comp, directorat_finance_comp, directorat_marketing_comp]
+              }
+            ],
+            grid: {
+              borderColor: borderColor,
+              padding: {
+                bottom: -8
+              }
+            },
+            xaxis: {
+              categories: ['Directorat IT', 'Directorat Finance', 'Directorat Marketing'],
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false
+              },
+              labels: {
+                style: {
+                  colors: axisColor
+                }
+              }
+            },
+            yaxis: {
+              min: 0,
+              max: 10,
+              tickAmount: 3,
+              labels: {
+                style: {
+                  colors: axisColor
+                }
+              }
+            },
+            legend: {
+              show: false
+            },
+            tooltip: {
+              y: {
+                formatter: function (val) {
+                  return ' ' + val + ' ';
+                }
+              }
+            }
+          };
+        if (typeof analyticsBarChartElDirectoratCompany !== undefined && analyticsBarChartElDirectoratCompany !== null) {
+          const analyticsBarChartDirectoratCompany = new ApexCharts(analyticsBarChartElDirectoratCompany, analyticsBarChartConfigDirectoratCompany);
+          analyticsBarChartDirectoratCompany.render();
+        }
+
+          const analyticsBarChartElDivisionCompany = document.querySelector('#analyticsBarChartDivisionCompany'),
+          analyticsBarChartConfigDivisionCompany = {
+            chart: {
+              height: 250,
+              type: 'bar',
+              toolbar: {
+                show: false
+              }
+            },
+            plotOptions: {
+              bar: {
+                horizontal: false,
+                columnWidth: '20%',
+                borderRadius: 3,
+                startingShape: 'rounded'
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            colors: [config.colors.primary, config.colors_label.primary],
+            series: [
+              {
+                name: 'Total Karyawan',
+                data: [division_dpi_comp, division_sa_comp, division_operation_comp]
+              }
+            ],
+            grid: {
+              borderColor: borderColor,
+              padding: {
+                bottom: -8
+              }
+            },
+            xaxis: {
+              categories: ['Divisi DPI', 'Divisi SA', 'Divisi Operation'],
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false
+              },
+              labels: {
+                style: {
+                  colors: axisColor
+                }
+              }
+            },
+            yaxis: {
+              min: 0,
+              max: 10,
+              tickAmount: 3,
+              labels: {
+                style: {
+                  colors: axisColor
+                }
+              }
+            },
+            legend: {
+              show: false
+            },
+            tooltip: {
+              y: {
+                formatter: function (val) {
+                  return ' ' + val + ' ';
+                }
+              }
+            }
+          };
+        if (typeof analyticsBarChartElDivisionCompany !== undefined && analyticsBarChartElDivisionCompany !== null) {
+          const analyticsBarChartDivisionCompany = new ApexCharts(analyticsBarChartElDivisionCompany, analyticsBarChartConfigDivisionCompany);
+          analyticsBarChartDivisionCompany.render();
+        }
+
+        const doughnutChartGenderCompany = document.getElementById('doughnutChartGenderCompany');
+        if (doughnutChartGenderCompany) {
+          const doughnutChartVar = new Chart(doughnutChartGenderCompany, {
+            type: 'doughnut',
+            data: {
+              labels: ['Pria', 'Wanita'],
+              datasets: [
+                {
+                  data: [employee_pria, employee_wanita],
+                  backgroundColor: [cyanColor, orangeLightColor, config.colors.primary],
+                  borderWidth: 0,
+                  pointStyle: 'rectRounded'
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio : true,
+              aspectRatio : 2,
+              animation: {
+                duration: 500
+              },
+              cutout: '0%',
+              plugins: {
+                legend: {
+                  display: false
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const label = context.labels || '',
+                        value = context.parsed;
+                      const output = ' ' + label + ' : ' + value + ' ';
+                      return output;
+                    }
+                  },
+                  // Updated default tooltip UI
+                  rtl: isRtl,
+                  backgroundColor: config.colors.white,
+                  titleColor: config.colors.black,
+                  bodyColor: config.colors.black,
+                  borderWidth: 1,
+                  borderColor: borderColor
+                }
+              }
+            }
+          });
+        }
+
+        const doughnutChartLeaveCompany = document.getElementById('doughnutChartLeaveCompany');
+        if (doughnutChartLeaveCompany) {
+          const doughnutChartVar = new Chart(doughnutChartLeaveCompany, {
+            type: 'doughnut',
+            data: {
+              labels: ['Cuti', 'Izin', 'Dan lainnya'],
+              datasets: [
+                {
+                  data: [timeoff_cuti, timeoff_izin, timeoff_lainnya],
+                  backgroundColor: [cyanColor, orangeLightColor, config.colors.primary],
+                  borderWidth: 0,
+                  pointStyle: 'rectRounded'
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio : true,
+              aspectRatio : 2,
+              animation: {
+                duration: 500
+              },
+              cutout: '68%',
+              plugins: {
+                legend: {
+                  display: false
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const label = context.labels || '',
+                        value = context.parsed;
+                      const output = ' ' + label + ' : ' + value + ' ';
+                      return output;
+                    }
+                  },
+                  // Updated default tooltip UI
+                  rtl: isRtl,
+                  backgroundColor: config.colors.white,
+                  titleColor: config.colors.black,
+                  bodyColor: config.colors.black,
+                  borderWidth: 1,
+                  borderColor: borderColor
+                }
+              }
+            }
+          });
+        }
+
+        const doughnutChartContractCompany = document.getElementById('doughnutChartContractCompany');
+        if (doughnutChartContractCompany) {
+          const doughnutChartVar = new Chart(doughnutChartContractCompany, {
+            type: 'doughnut',
+            data: {
+              labels: ['Tetap','PKWT'],
+              datasets: [
+                {
+                  data: [jobstatus_tetap, jobstatus_pkwt],
+                  backgroundColor: [cyanColor, orangeLightColor, config.colors.primary],
+                  borderWidth: 0,
+                  pointStyle: 'rectRounded'
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio : true,
+              aspectRatio : 2,
+              animation: {
+                duration: 500
+              },
+              cutout: '68%',
+              plugins: {
+                legend: {
+                  display: false
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const label = context.labels || '',
+                        value = context.parsed;
+                      const output = ' ' + label + ' : ' + value + ' %';
+                      return output;
+                    }
+                  },
+                  // Updated default tooltip UI
+                  rtl: isRtl,
+                  backgroundColor: config.colors.white,
+                  titleColor: config.colors.black,
+                  bodyColor: config.colors.black,
+                  borderWidth: 1,
+                  borderColor: borderColor
+                }
+              }
+            }
+          });
+        }
+
+        const analyticsBarChartElAgeRangeCompany = document.querySelector('#analyticsBarChartAgeRangeCompany'),
+        analyticsBarChartConfigAgeRangeCompany = {
+          chart: {
+            height: 303,
+            type: 'bar',
+            toolbar: {
+              show: false
+            }
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              columnWidth: '20%',
+              borderRadius: 3,
+              startingShape: 'rounded'
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          colors: [config.colors.primary, config.colors_label.primary],
+          series: [
+            {
+              name: '',
+              data: [kurang20, dari21_25, dari26_30, dari31_35, dari36_40, dari41_45, dari46_50, lebih50]
+            }
+          ],
+          grid: {
+            borderColor: borderColor,
+            padding: {
+              bottom: -8
+            }
+          },
+          xaxis: {
+            categories: ['<20', '21-25', '25-30', '30-35', '35-40', '41-45', '45-50', '>50'],
+            axisBorder: {
+              show: false
+            },
+            axisTicks: {
+              show: false
+            },
+            labels: {
+              style: {
+                colors: axisColor
+              }
+            }
+          },
+          yaxis: {
+            min: 0,
+            max: 10,
+            tickAmount: 3,
+            labels: {
+              style: {
+                colors: axisColor
+              }
+            }
+          },
+          legend: {
+            show: false
+          },
+          tooltip: {
+            y: {
+              formatter: function (val) {
+                return '' + val + ' ';
+              }
+            }
+          }
+        };
+      if (typeof analyticsBarChartElAgeRangeCompany!== undefined && analyticsBarChartElAgeRangeCompany !== null) {
+        const analyticsBarChartAgeRangeCompany= new ApexCharts(analyticsBarChartElAgeRangeCompany, analyticsBarChartConfigAgeRangeCompany);
+        analyticsBarChartAgeRangeCompany.render();
+      }
+
+      const doughnutChartLocationCompany = document.getElementById('doughnutChartLocationCompany');
+      if (doughnutChartLocationCompany) {
+        const doughnutChartVar = new Chart(doughnutChartLocationCompany, {
+          type: 'doughnut',
+          data: {
+            labels: ['Jakarta','Bandung','Padang','Lainnya'],
+            datasets: [
+              {
+                data: [placeofbirth_jakarta, placeofbirth_bandung, placeofbirth_padang, placeofbirth_lainnya],
+                backgroundColor: [cyanColor, orangeLightColor, config.colors.primary],
+                borderWidth: 0,
+                pointStyle: 'rectRounded'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio : true,
+            aspectRatio : 2,
+            animation: {
+              duration: 500
+            },
+            cutout: '0%',
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const label = context.labels || '',
+                      value = context.parsed;
+                    const output = ' ' + label + ' : ' + value + ' ';
+                    return output;
+                  }
+                },
+                // Updated default tooltip UI
+                rtl: isRtl,
+                backgroundColor: config.colors.white,
+                titleColor: config.colors.black,
+                bodyColor: config.colors.black,
+                borderWidth: 1,
+                borderColor: borderColor
+              }
+            }
+          }
+        });
+      }
+
+        const donutChartElEducationCompany = document.querySelector('#donutChartEducationCompany'),
+        donutChartConfigEducationCompany = {
+          chart: {
+            height: 350,
+            fontFamily: 'IBM Plex Sans',
+            type: 'donut'
+          },
+          labels: ['Diploma','S1','S2', 'S3'],
+          series: [education_diploma, education_S1, education_S2, education_S3],
+          colors: [
+            chartColors.donut.series3,
+            chartColors.donut.series1,
+            chartColors.donut.series4,
+            chartColors.donut.series2
+          ],
+          stroke: {
+            show: false,
+            curve: 'straight'
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function (val, opt) {
+              return parseInt(val) + '%';
+            }
+          },
+          legend: {
+            show: true,
+            position: 'bottom',
+            labels: {
+              colors: axisColor,
+              useSeriesColors: false
+            }
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                labels: {
+                  show: false,
+                  name: {
+                    fontSize: '1 rem',
+                    color: axisColor
+                  },
+                  value: {
+                    fontSize: '1.2rem',
+                    color: axisColor,
+                    fontFamily: 'IBM Plex Sans',
+                    formatter: function (val) {
+                      return parseInt(val) + '%';
+                    }
+                  },
+                  total: {
+                    show: false,
+                    fontSize: '1 rem',
+                    color: headingColor,
+                    label: 'Operational',
+                    formatter: function (w) {
+                      return '31%';
+                    }
+                  }
+                }
+              }
+            }
+          },
+          responsive: [
+            {
+              breakpoint: 992,
+              options: {
+                chart: {
+                  height: 380
+                },
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    colors: axisColor,
+                    useSeriesColors: false
+                  }
+                }
+              }
+            },
+            {
+              breakpoint: 576,
+              options: {
+                chart: {
+                  height: 320
+                },
+                plotOptions: {
+                  pie: {
+                    donut: {
+                      labels: {
+                        show: true,
+                        name: {
+                          fontSize: '1.5rem'
+                        },
+                        value: {
+                          fontSize: '1rem'
+                        },
+                        total: {
+                          fontSize: '1.5rem'
+                        }
+                      }
+                    }
+                  }
+                },
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    colors: axisColor,
+                    useSeriesColors: false
+                  }
+                }
+              }
+            },
+            {
+              breakpoint: 420,
+              options: {
+                chart: {
+                  height: 280
+                },
+                legend: {
+                  show: false
+                }
+              }
+            },
+            {
+              breakpoint: 360,
+              options: {
+                chart: {
+                  height: 250
+                },
+                legend: {
+                  show: false
+                }
+              }
+            }
+          ]
+        };
+      if (typeof donutChartElEducationCompany !== undefined && donutChartElEducationCompany !== null) {
+        const donutChart = new ApexCharts(donutChartElEducationCompany, donutChartConfigEducationCompany);
+        donutChart.render();
+      }
+
+
+
+      }
+
+    </script>
+
+    <meta charset="utf-8"/>
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
     <title>Dashboard</title>
 
-    <meta name="description" content="" />
+    <meta name="description" content=""/>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../../assets/img/favicon/favicon.ico" />
@@ -28,8 +646,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet"/>
 
     <!-- Icons -->
     <link rel="stylesheet" href="../../assets/vendor/fonts/boxicons.css" />
@@ -47,16 +664,14 @@
     <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css" />
     <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css" />
 
-    <!-- Page CSS -->
-
     <!-- Helpers -->
-
+    <script src="{{ asset("assets/vendor/js/helpers.js") }}"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
-    <script src="../../assets/vendor/js/template-customizer.js"></script>
+    <script src="{{ asset("assets/vendor/js/template-customizer.js") }}"></script>
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="../../assets/js/config.js"></script>
+    <script src="{{ asset("assets/js/config.js") }}"></script>
   </head>
 
   <body>
@@ -74,8 +689,7 @@
                   viewBox="0 0 26 26"
                   version="1.1"
                   xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                >
+                  xmlns:xlink="http://www.w3.org/1999/xlink">
                   <title>icon</title>
                   <defs>
                     <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
@@ -117,33 +731,29 @@
                   </g>
                 </svg>
               </span>
-              <span class="app-brand-text demo menu-text fw-bold ms-2">Frest</span>
+              <span class="app-brand-text demo menu-text fw-bold ms-2">Dashboard</span>
             </a>
-
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
               <i class="bx menu-toggle-icon d-none d-xl-block fs-4 align-middle"></i>
               <i class="bx bx-x d-block d-xl-none bx-sm align-middle"></i>
             </a>
-          </div>
+            </div>
 
           <div class="menu-divider mt-0"></div>
-
           <div class="menu-inner-shadow"></div>
-
           <ul class="menu-inner py-1">
-
 
             <!-- Dashboards -->
             <li class="menu-item active open">
-              <a href="javascript:void(0);" class="menu-link">
+              <a href="{{ route('dashboard') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Dashboards">Dashboards</div>
+                <div data-i18n="Company">Company</div>
               </a>
             </li>
 
             <!-- Layouts -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link">
+            <li class="menu-item ">
+              <a href="{{ route('attendance') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-layout"></i>
                 <div data-i18n="Attendance">Attendance</div>
               </a>
@@ -154,7 +764,6 @@
 
         <!-- Layout container -->
         <div class="layout-page">
-         
 
           <!-- Content wrapper -->
           <div class="content-wrapper">
@@ -164,12 +773,12 @@
                 <div class="mb-3 row">
                     <div class="col-md-8">
                       <h4 class="py-3 breadcrumb-wrapper mb-4">
-                        <span class="text-muted fw-light">Dashboard/</span> Company
+                        <span class="text-muted fw-light">Dashboard/</span> Company 
                       </h4>
                     </div>
                     <div class="col-md-4">
                       <div class="mb-3">
-                        <input class="form-control" type="month" value="2021-06" id="html5-month-input" />
+                        <input class="form-control" type="month" value="{{ $datenewdata2 }}" id="html5-month-input" />
                       </div>
                     </div>
                   </div>
@@ -179,32 +788,23 @@
                 <div class="col-lg-3 col-md-6 col-sm-12">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h3>
-                        <i class="bx bx-cart text-success display-6"></i>
-                      </h3>
-                      <h5>Total Employee</h5>
-                      <h4>340</h4>
+                      <h5>Headcount</h5>
+                      <h4>{{ $total_employees}}</h4>
                     </div>
                   </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12 ">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h3>
-                        <i class="bx bx-globe text-info display-6"></i>
-                      </h3>
-                      <h5>Masa Kerja</h5>
-                      <h4>6.5 Tahun</h4>
+                      <h5>Avg Tenure</h5>
+                      <h4>{{ $masa_kerja }}</h4>
                     </div>
                   </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h3>
-                        <i class="bx bx-gift text-danger display-6"></i>
-                      </h3>
-                      <h5>Cuti Diambil</h5>
+                      <h5>Absences</h5>
                       <h4>50 Hari</h4>
                     </div>
                   </div>
@@ -212,100 +812,102 @@
                 <div class="col-lg-3 col-md-6 col-sm-12">
                   <div class="card drag-item cursor-move mb-lg-0 mb-4">
                     <div class="card-body text-center">
-                      <h3>
-                        <i class="bx bx-user text-primary display-6"></i>
-                      </h3>
-                      <h5>Ketidakhadiran</h5>
-                      <h4>0,90%</h4>
+                      <h5>Leave Taken</h5>
+                      <h4>67</h4>
                     </div>
                   </div>
                 </div>
                 </div>
                 <!-- /Cards Draggable ends -->
 
-                <!-- Bar Chart -->
-                <div class="col-12 inline-block">
+                <!-- Website Analytics-->
+                <div class="row mb-4" id="sortable-cards">
+                <div class="col-6 mb-4">
                 <div class="card">
                   <div class="card-header d-flex justify-content-between align-items-md-center align-items-start">
-                    <h5 class="card-title mb-0"> Jumlah Karyawan Perdepartement</h5>
+                    <h5 class="card-title mb-0">Headcount by Directorate</h5>
                     <div class="dropdown">
-                      <button
-                        type="button"
-                        class="btn dropdown-toggle p-0"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i class="bx bx-calendar"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                          <a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a>
-                        </li>
-                        <li>
-                          <a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a>
-                        </li>
-                        <li>
-                          <a href="javascript:void(0);" class="dropdown-item d-flex align-items-center"
-                            >Last 7 Days</a
-                          >
-                        </li>
-                        <li>
-                          <a href="javascript:void(0);" class="dropdown-item d-flex align-items-center"
-                            >Last 30 Days</a
-                          >
-                        </li>
-                        <li>
-                          <hr class="dropdown-divider" />
-                        </li>
-                        <li>
-                          <a href="javascript:void(0);" class="dropdown-item d-flex align-items-center"
-                            >Current Month</a
-                          >
-                        </li>
-                        <li>
-                          <a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last Month</a>
-                        </li>
-                      </ul>
+                  </div>
+                  </div>
+                  <div class="card-body pb-2">
+                    <div id="analyticsBarChartDirectoratCompany"></div>
+                  </div>
+                </div>
+                </div>
+
+                <!-- Website Analytics-->
+                <div class="col-lg-6 mb-4 col-md-12">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="card-title mb-0">Headcount by Division</h5>
+                      <div class="dropdown">
+                    </div>
+                    </div>
+                    <div class="card-body pb-2">
+                      <div id="analyticsBarChartDivisionCompany"></div>
                     </div>
                   </div>
-                  <div class="card-body">
-                    <div id="barChart"></div>
-                  </div>
                 </div>
-                </div>
-                <!-- /Bar Chart -->
-              
-              
+
                 <!-- Doughnut Chart -->
-                <div class="col-lg-4 col-12 mt-4 inline-block ">
+                <div class="col-lg-4 col-12 mb-4 inline-block">
+                    <div class="card">
+                      <h5 class="card-header">Headcount by Gender</h5>
+                      <div class="card-body">
+                        <canvas id="doughnutChartGenderCompany" class="chartjs mb-4" data-height="350"></canvas>
+                        <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
+                          <li class="ct-series-0 d-flex flex-column">
+                            <h6 class="mb-0 fw-bold">Pria</h6>
+                            <span
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #28dac6; width: 35px; height: 6px"
+                            ></span>
+                            <div class="text-muted">{{ $percent_pria }}%</div>
+                          </li>
+                          <li class="ct-series-1 d-flex flex-column">
+                            <h6 class="mb-0 fw-bold">Wanita</h6>
+                            <span
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #FDAC34; width: 35px; height: 6px"
+                            ></span>
+                            <div class="text-muted">{{ $percent_wanita }}%</div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                </div>
+                <!-- /Doughnut Chart -->
+
+                <!-- Doughnut Chart -->
+                <div class="col-lg-4 col-12 ">
                   <div class="card">
-                    <h5 class="card-header">Status Ketidakhadiran</h5>
+                    <h5 class="card-header">Leave Taken by Category</h5>
                     <div class="card-body">
-                      <canvas id="doughnutChart" class="chartjs mb-4" data-height="350"></canvas>
+                      <canvas id="doughnutChartLeaveCompany" class="chartjs mb-4" data-height="350"></canvas>
                       <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
                         <li class="ct-series-0 d-flex flex-column">
                           <h6 class="mb-0 fw-bold">Cuti</h6>
                           <span
                             class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                            style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"
+                            style="background-color: #28dac6; width: 35px; height: 6px"
                           ></span>
-                          <div class="text-muted">80 %</div>
+                          <div class="text-muted">{{ $percent_cuti }}%</div>
                         </li>
                         <li class="ct-series-1 d-flex flex-column">
-                          <h6 class="mb-0 fw-bold">Sakit</h6>
+                          <h6 class="mb-0 fw-bold">Izin</h6>
                           <span
                             class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                            style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"
+                            style="background-color: #FDAC34; width: 35px; height: 6px"
                           ></span>
-                          <div class="text-muted">10 %</div>
+                          <div class="text-muted">{{ $percent_izin }}%</div>
                         </li>
                         <li class="ct-series-2 d-flex flex-column">
                           <h6 class="mb-0 fw-bold">Lainnya</h6>
                           <span
                             class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                            style="background-color: rgb(253, 172, 52); width: 35px; height: 6px"
+                            style="background-color: #299AFF; width: 35px; height: 6px"
                           ></span>
-                          <div class="text-muted">10 %</div>
+                          <div class="text-muted">{{ $percent_timeoff }}%</div>
                         </li>
                       </ul>
                     </div>
@@ -314,86 +916,86 @@
                 <!-- /Doughnut Chart -->
 
                 <!-- Doughnut Chart -->
-                <div class="col-lg-4 col-12 mt-4 inline-block">
+                <div class="col-lg-4 col-12 mb-4 inline-block">
                     <div class="card">
-                      <h5 class="card-header">Karyawan Berdasarkan Gender</h5>
+                      <h5 class="card-header">Headcount by Contract</h5>
                       <div class="card-body">
-                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="350"></canvas>
-                        <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
-                          <li class="ct-series-0 d-flex flex-column">
-                            <h6 class="mb-0 fw-bold">Pria</h6>
-                            <span
-                              class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"
-                            ></span>
-                            <div class="text-muted">60%</div>
-                          </li>
-                          <li class="ct-series-1 d-flex flex-column">
-                            <h6 class="mb-0 fw-bold">Wanita</h6>
-                            <span
-                              class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"
-                            ></span>
-                            <div class="text-muted">40%</div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                </div>
-                <!-- /Doughnut Chart -->
-
-
-                <!-- Doughnut Chart -->
-                <div class="col-lg-4 col-12 mt-4 inline-block">
-                    <div class="card">
-                      <h5 class="card-header">Karyawan Berdasarkan Status</h5>
-                      <div class="card-body">
-                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="350"></canvas>
+                        <canvas id="doughnutChartContractCompany" class="chartjs mb-4" data-height="350"></canvas>
                         <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
                           <li class="ct-series-0 d-flex flex-column">
                             <h6 class="mb-0 fw-bold">Tetap</h6>
                             <span
-                              class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #28dac6; width: 35px; height: 6px"
                             ></span>
-                            <div class="text-muted">80%</div>
+                            <div class="text-muted">{{ $percent_tetap }}%</div>
                           </li>
                           <li class="ct-series-1 d-flex flex-column">
-                            <h6 class="mb-0 fw-bold">Kontrak</h6>
+                            <h6 class="mb-0 fw-bold">PKWT</h6>
                             <span
-                              class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #FDAC34; width: 35px; height: 6px"
                             ></span>
-                            <div class="text-muted">20%</div>
+                            <div class="text-muted">{{ $percent_pkwt }}%</div>
                           </li>
                         </ul>
                       </div>
                     </div>
                 </div>
                 <!-- /Doughnut Chart -->
+
+                <!-- Website Analytics-->
+                <div class="col-lg-6 mb-4 col-md-12">
+                  <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="card-title mb-0">Headcount by Age Range</h5>
+                      <div class="dropdown">
+                    </div>
+                    </div>
+                    <div class="card-body pb-2">
+                      <div id="analyticsBarChartAgeRangeCompany"></div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Doughnut Chart -->
-                <div class="col-lg-4 col-12 mt-4 inline-block">
-                    <div class="card">
-                      <h5 class="card-header">Karyawan Berdasarkan Wilayah</h5>
+                <div class="col-lg-6 col-12 mb-4 inline-block">
+                    <div class="card h-100">
+                      <h5 class="card-header">Headcount by Location</h5>
                       <div class="card-body">
-                        <canvas id="doughnutChart" class="chartjs mb-4" data-height="350"></canvas>
+                        <canvas id="doughnutChartLocationCompany" class="chartjs mb-4" data-height="350"></canvas>
                         <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
                           <li class="ct-series-0 d-flex flex-column">
-                            <h6 class="mb-0 fw-bold">Pulau Jawa</h6>
+                            <h6 class="mb-0 fw-bold">Jakarta</h6>
                             <span
-                              class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #28dac6; width: 35px; height: 6px"
                             ></span>
-                            <div class="text-muted">60%</div>
+                            <div class="text-muted">{{ $percent_jakarta }}%</div>
                           </li>
                           <li class="ct-series-1 d-flex flex-column">
-                            <h6 class="mb-0 fw-bold">Luar Pulau Jawa</h6>
+                            <h6 class="mb-0 fw-bold">Bandung</h6>
                             <span
-                              class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                              style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #FDAC34; width: 35px; height: 6px"
                             ></span>
-                            <div class="text-muted">40%</div>
+                            <div class="text-muted">{{ $percent_bandung }}%</div>
+                          </li>
+                          <li class="ct-series-1 d-flex flex-column">
+                            <h6 class="mb-0 fw-bold">Padang</h6>
+                            <span
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #299AFF; width: 35px; height: 6px"
+                            ></span>
+                            <div class="text-muted">{{ $percent_padang }}%</div>
+                          </li>
+                          <li class="ct-series-1 d-flex flex-column">
+                            <h6 class="mb-0 fw-bold">Lainnya</h6>
+                            <span
+                            class="badge badge-dot my-2 cursor-pointer rounded-pill"
+                            style="background-color: #ffe800; width: 35px; height: 6px"
+                            ></span>
+                            <div class="text-muted">{{ $percent_lainnya }}%</div>
                           </li>
                         </ul>
                       </div>
@@ -401,121 +1003,48 @@
                 </div>
                 <!-- /Doughnut Chart -->
 
-
-                <!-- Scatter Chart -->
-                <div class="col-lg-8 col-12 mt-4">
-                    <div class="card">
-                      <div class="card-header flex-nowrap header-elements">
-                        <h5 class="card-title mb-0">Jumlah Karyawan Berdasarkan Usia</h5>
-                        <div class="card-header-elements ms-auto py-0 d-none d-sm-block">
-                          <div class="btn-group" role="group" aria-label="radio toggle button group">
-                            <input
-                              type="radio"
-                              class="btn-check"
-                              name="btnradio"
-                              id="dailyRadio"
-                              checked
-                              autocomplete="off"
-                            />
-                            <label class="btn btn-outline-secondary" for="dailyRadio">Daily</label>
-  
-                            <input type="radio" class="btn-check" name="btnradio" id="monthlyRadio" autocomplete="off" />
-                            <label class="btn btn-outline-secondary" for="monthlyRadio">Monthly</label>
-  
-                            <input type="radio" class="btn-check" name="btnradio" id="yearlyRadio" autocomplete="off" />
-                            <label class="btn btn-outline-secondary" for="yearlyRadio">Yearly</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="card-body">
-                        <canvas id="scatterChart" class="chartjs" data-height="435"></canvas>
-                      </div>
-                    </div>
-                  </div>
-                <!-- /Scatter Chart -->
-
-
-                <!-- Polar Area Chart -->
-                <div class="col-lg-6 col-12 mt-4">
-                  <div class="card">
-                    <div class="card-header header-elements">
-                      <h5 class="card-title mb-0">Pendidikan Karyawan</h5>
-                      <div class="card-header-elements ms-auto py-0 dropdown">
-                        <button type="button" class="btn dropdown-toggle hide-arrow p-0" id="heat-chart-dd" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-dots-vertical-rounded"></i></button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="heat-chart-dd">
-                          <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Last Year</a>
-                        </div>
+                <!-- Donut Chart -->
+                <div class="col-lg-4 col-12 mb-4">
+                  <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                      <div>
+                        <h5 class="card-title mb-0">Headcount by Education</h5>
                       </div>
                     </div>
                     <div class="card-body">
-                      <canvas id="polarChart" class="chartjs" data-height="337"></canvas>
+                      <div id="donutChartEducationCompany"></div>
                     </div>
                   </div>
                 </div>
-                <!-- /Polar Area Chart -->
+                <!-- /Donut Chart -->
 
+                <!-- Website Analytics-->
+                <div class="col-lg-8 mb-4 col-md-12">
+                  <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="card-title mb-0">Top 5 Employee by Attendance</h5>
+                      <div class="dropd6own">
+                    </div>
+                    </div>
+                    <div class="card-body pb-2">
+                      <div id="analyticsBarChartUsia1B"></div>
+                    </div>
+                  </div>
+                </div>
 
-                <!-- Bar Charts -->
-                <div class="col-xl-6 col-12 mt-4">
+                <!-- Website Analytics-->
+                <div class="col-lg-12 mb-4 col-md-12">
                   <div class="card">
-                    <div class="card-header header-elements">
-                      <h5 class="card-title mb-0">Pemberhentian Karyawan Usia</h5>
-                      <div class="card-action-element ms-auto py-0">
-                        <div class="dropdown">
-                          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-calendar"></i></button>
-                          <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last 7 Days</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last 30 Days</a></li>
-                            <li>
-                              <hr class="dropdown-divider">
-                            </li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Current Month</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last Month</a></li>
-                          </ul>
-                        </div>
-                      </div>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="card-title mb-0">-</h5>
+                      <div class="dropdown">
                     </div>
-                    <div class="card-body">
-                      <canvas id="barChart" class="chartjs" data-height="400"></canvas>
+                    </div>
+                    <div class="card-body pb-2">
+                      <div id="analyticsBarChartUsia1C"></div>
                     </div>
                   </div>
                 </div>
-                <!-- /Bar Charts -->
-                
-
-                <!-- Bar Charts -->
-                <div class="col-xl-6 col-12 mt-4">
-                  <div class="card">
-                    <div class="card-header header-elements">
-                      <h5 class="card-title mb-0">Pemberhentian Karyawan Departemen</h5>
-                      <div class="card-action-element ms-auto py-0">
-                        <div class="dropdown">
-                          <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-calendar"></i></button>
-                          <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last 7 Days</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last 30 Days</a></li>
-                            <li>
-                              <hr class="dropdown-divider">
-                            </li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Current Month</a></li>
-                            <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last Month</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="barChart" class="chartjs" data-height="400"></canvas>
-                    </div>
-                  </div>
-                </div>
-                <!-- /Bar Charts -->
-
             </div>
             <!-- / Content -->
             <div class="content-backdrop fade"></div>
@@ -535,32 +1064,38 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="{{ asset("assets/vendor/libs/popper/popper.js") }}"></script>
+    <script src="{{ asset("assets/vendor/js/bootstrap.js")}}"></script>
+    <script src="{{ asset("assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js") }}"></script>
 
-    <script src="../../assets/vendor/libs/hammer/hammer.js"></script>
+    <script src="{{ asset("assets/vendor/libs/hammer/hammer.js") }}"></script>
 
-    <script src="../../assets/vendor/libs/i18n/i18n.js"></script>
-    <script src="../../assets/vendor/libs/typeahead-js/typeahead.js"></script>
+    <script src="{{ asset("assets/vendor/libs/i18n/i18n.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/typeahead-js/typeahead.js") }}"></script>
 
-    <script src="../../assets/vendor/js/menu.js"></script>
+    <script src="{{ asset("assets/vendor/js/menu.js") }}"></script>
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="../../assets/vendor/libs/cleavejs/cleave.js"></script>
-    <script src="../../assets/vendor/libs/cleavejs/cleave-phone.js"></script>
-    <script src="../../assets/vendor/libs/moment/moment.js"></script>
-    <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-    <script src="../../assets/vendor/libs/select2/select2.js"></script>
-    
+    <script src="{{ asset("assets/vendor/libs/cleavejs/cleave.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/cleavejs/cleave-phone.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/moment/moment.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/flatpickr/flatpickr.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/select2/select2.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/chartjs/chartjs.js") }}"></script>
+    <script src="{{ asset("assets/vendor/libs/apex-charts/apexcharts.js") }}"></script>
 
     <!-- Main JS -->
-    <script src="../../assets/js/main.js"></script>
+    <script src="{{ asset("assets/js/main.js") }}"></script>
 
     <!-- Page JS -->
-    <script src="../../assets/js/form-layouts.js"></script>
-    
+    <script src="{{ asset("assets/js/charts-chartjs.js") }}"></script>
+    <script src="{{ asset("assets/js/charts-apex.js") }}"></script>
+    <script src="{{ asset("assets/js/dashboards-analytics.js") }}"></script>
+
+  
+
+
+  
   </body>
 </html>
