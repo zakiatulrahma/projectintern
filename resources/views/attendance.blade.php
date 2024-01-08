@@ -50,7 +50,7 @@
       $(document).ready(function(){
         $('#html5-month-input').change(function(){
           var selectedDate = $(this).val();
-          window.location.href = '/dashboard' + selectedDate;
+          window.location.href = '/attendance/' + selectedDate;
         });
       });
 

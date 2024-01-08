@@ -37,5 +37,3 @@ Route::get('/test', [TestController::class, 'home']);
 Route::get('/attendance/{date?}', [EmployeeController::class, 'attendance'])->name('attendance');
 Route::get('/dashboard/{date?}', [EmployeeController::class, 'dashboard'])->name('dashboard');
 Route::get('/chartData', 'EmployeeController@chartData');
-
-

@@ -47,23 +47,12 @@
       var attendanceTimeOff =0;
       var attendanceDate =0;
 
-      $(document).ready(function(){
-        $('#html5-month-input').change(function(){
-          var selectedMonth = $(this).val();
-          var url = "{{ route('dashboard', ['date' => ':date']) }}";
-            url = url.replace(':date', selectedMonth);
-            window.location.href = url;
-        });
-      });
-    //   $(document).ready(function(){
-    // $('#html5-month-input').change(function(){
-    //     var selectedMonth = $(this).val();
-    //     var url = '{{ route('dashboard', ['date' => ':selectedMonth']) }}';
-    //     url = url.replace(':selectedMonth', selectedMonth);
-    //     window.location.href = url;
-    // });
-
-// });
+      $(document).ready(function() {
+                $('#html5-month-input').change(function() {
+                    var selectedDate = $(this).val();
+                    window.location.href = '/dashboard/' + selectedDate;
+                });
+            });
 
 
       function updateChart2(data){

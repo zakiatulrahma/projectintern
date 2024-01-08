@@ -102,7 +102,6 @@ class EmployeeController extends Controller
         $timeoff = Attendance::whereNotNull('time_off_id')
         ->whereDate('date',$datenewdata)->count();
 
-
         //attendance by gender by dashboard attendance
         $attendance_pria = AttendanceHistory::where('status', 1)
         ->whereDate('date', $datenewdata)
@@ -230,23 +229,12 @@ class EmployeeController extends Controller
         ]);
     }
 
-    // public function chartData(){
-    //     $data=Employee::orderBy('tanggal')->get();
-    //     return response()->json($data);
-    // }
-    
-
     public function dashboard( Request $request,$date = null){
         if($request->has('date')){
             $date = $request->date;
         }
-        // dd($request->has('tahun'));
-
-
-        //dashboard hr company
-        // $date = $request->query('date');
-        // dd($date);
         $latestAttendance2 = AttendanceHistory::latest()->first();
+
         if ($date == null) {
             $datenewdata2 = ($date === null) ? date('Y-m', strtotime($latestAttendance2->date)) : $date;
             $total_employee = Employee::count();
@@ -256,10 +244,7 @@ class EmployeeController extends Controller
             $total_employee = Employee::whereYear('join_date', $tahun)
                 ->whereMonth('join_date', $bulan)
                 ->count();
-                // dd($total_employee);
             }
-
-        // dd($date);
 
         //masa kerja
         $averageTenureInYears = Employee::selectRaw('AVG(DATEDIFF(NOW(), join_date) / 365.25) AS average_tenure')->value('average_tenure');
@@ -360,13 +345,6 @@ class EmployeeController extends Controller
             $percent_lainnya= round(($placeofbirth_lainnya / $total_employee) *100,2);
         }
 
-        // //employee by directorat dashboard hr company
-        // $directorat_it_comp= Employee::where('directorate_id','1')->count();
-        // $directorat_finance_comp= Employee::where('directorate_id','2')->count();
-        // $directorat_marketing_comp= Employee::where('directorate_id','3')->count();
-
-        //attendance by directorate dashboard attendance
-
         $directorat_it_comp = Employee::where('directorate_id', '1')
         ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
         ->count();
@@ -390,18 +368,6 @@ class EmployeeController extends Controller
         $division_operation_comp= Employee::where('division_id','3')
         ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
         ->count();
-
-
-        //top 5 employeee
-        // $topEmployees = Employee::join('attendance_histories', 'employee.employee_id', '=', 'attendance_histories.employee_id')
-        //     ->whereDate(DB::raw('DATE_FORMAT(attendance_histories.date, "%y-%d")'), $datenewdata2)
-        //     ->where('attendance_histories.status', '1')
-        //     ->groupBy('employee.employee_id', 'employee.employee_name')
-        //     ->select('employee.employee_id', 'employee.employee_name', DB::raw('COUNT(attendance_histories.employee_id) AS total_attendance'))
-        //     ->orderByDesc('total_attendance')
-        //     ->limit(5)
-        //     ->get();
-
 
         //employee by old dashboard hr company
         $kurang20= [];
@@ -440,6 +406,7 @@ class EmployeeController extends Controller
                 array_push($lebih50, $age->Age);
             }
         }
+        
 
 
         return view('dashboard2',[
@@ -490,7 +457,6 @@ class EmployeeController extends Controller
             'dari46_50' => count($dari46_50),
             'lebih50' => count($lebih50),
             'datenewdata2' => $datenewdata2,
-            // 'topEmployees' => $topEmployees,
         ]);
     }
 }
