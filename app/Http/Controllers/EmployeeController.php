@@ -244,6 +244,14 @@ class EmployeeController extends Controller
         if ($date == null) {
             $datenewdata2 = ($date === null) ? date('Y-m', strtotime($latestAttendance2->date)) : $date;
             $total_employee = Employee::count();
+            //employee by status dashboard hr company
+            $jobstatus_tetap = Employee::where('job_status_id', '1')->count();
+            $jobstatus_pkwt = Employee::where('job_status_id', '2')->count();
+            //employee by location dashboard hr company
+            $placeofbirth_jakarta = Employee::where('place_of_birth', 'Jakarta')->count();
+            $placeofbirth_bandung = Employee::where('place_of_birth', 'Bandung')->count();
+            $placeofbirth_padang = Employee::where('place_of_birth', 'Padang')->count();
+            $placeofbirth_lainnya = Employee::whereNotIn('place_of_birth', ['Jakarta', 'Bandung', 'Padang'])->count();
         } else {
             $datenewdata2 = $date;
             $explode_Date = explode('-', $datenewdata2);
@@ -252,6 +260,24 @@ class EmployeeController extends Controller
             $total_employee = Employee::whereYear('join_date', $tahun)
                 ->whereMonth('join_date', $bulan)
                 ->count();
+            $jobstatus_tetap = Employee::where('job_status_id', '1')
+                ->whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)
+                ->count();
+            $jobstatus_pkwt = Employee::where('job_status_id', '2')
+                ->whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)
+                ->count();
+            //employee by location dashboard hr company
+            $placeofbirth_jakarta = Employee::where('place_of_birth', 'Jakarta')
+                ->whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)->count();
+            $placeofbirth_bandung = Employee::where('place_of_birth', 'Bandung')->whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)->count();
+            $placeofbirth_padang = Employee::where('place_of_birth', 'Padang')->whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)->count();
+            $placeofbirth_lainnya = Employee::whereNotIn('place_of_birth', ['Jakarta', 'Bandung', 'Padang'])->whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)->count();
         }
 
         //masa kerja
@@ -308,7 +334,7 @@ class EmployeeController extends Controller
         $education_S3 = Employee::where('education_id', '11')->count();
         // $total_employee= Employee::count();
 
-        if ($total_employee === 0) {
+        if ($total_employee == 0) {
             $percent_diploma = 0;
             $percent_S1 = 0;
             $percent_S2 = 0;
@@ -320,11 +346,7 @@ class EmployeeController extends Controller
             $percent_S3 = round(($education_S3 / $total_employee) * 100);
         }
 
-        //employee by status dashboard hr company
-        $jobstatus_tetap = Employee::where('job_status_id', '1')->count();
-        $jobstatus_pkwt = Employee::where('job_status_id', '2')->count();
-
-        if ($total_employee === 0) {
+        if ($total_employee == 0) {
             $percent_tetap = 0;
             $percent_pkwt = 0;
         } else {
@@ -332,11 +354,7 @@ class EmployeeController extends Controller
             $percent_pkwt = round(($jobstatus_pkwt / $total_employee) * 100);
         }
 
-        //employee by location dashboard hr company
-        $placeofbirth_jakarta = Employee::where('place_of_birth', 'Jakarta')->count();
-        $placeofbirth_bandung = Employee::where('place_of_birth', 'Bandung')->count();
-        $placeofbirth_padang = Employee::where('place_of_birth', 'Padang')->count();
-        $placeofbirth_lainnya = Employee::whereNotIn('place_of_birth', ['Jakarta', 'Bandung', 'Padang'])->count();
+
 
         if ($total_employee === 0) {
             $percent_jakarta = 0;
