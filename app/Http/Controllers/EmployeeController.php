@@ -69,7 +69,8 @@ class EmployeeController extends Controller
         sum(case when checkin >= '08:00:00' and checkin <= '09:15:00' and time_off_id is null then 1 else 0 end ) as on_time,
         sum(case when checkin > '09:15:00' and time_off_id is null then 1 else 0 end ) as late_in,
         sum(case when checkin is null and checkout is not null and time_off_id is null then 1 else 0 end ) as check_out,
-        ((select count(*) from employees) - count(employee_id)) as absen")->get();
+        ((select count(*) from employees) - count(employee_id)) as absen")->orderByDesc('date')->orderBy('date', 'asc')->limit(12)->get();
+
 
         $attendanceCheckIn = [];
         $attendanceLateIn = [];
@@ -198,7 +199,8 @@ class EmployeeController extends Controller
             ->where('divisions.id', '3')->groupBy(['attendance_histories.employee_id', 'attendance_histories.date'])->select('attendance_histories.employee_id')->get();
 
 
-        return view('attendance', [
+       
+            return view('attendance', [
             'total_employees' => $total_employee,
             'on_time' => $totalOnTime,
             'nocheckin' => $nocheckin,
@@ -230,12 +232,6 @@ class EmployeeController extends Controller
         ]);
     }
 
-    // public function chartData(){
-    //     $data=Employee::orderBy('tanggal')->get();
-    //     return response()->json($data);
-    // }
-
-
     public function dashboard($date = null)
     {
         $latestAttendance2 = AttendanceHistory::latest()->first();
@@ -243,22 +239,29 @@ class EmployeeController extends Controller
         if ($date == null) {
             $datenewdata2 = ($date === null) ? date('Y-m', strtotime($latestAttendance2->date)) : $date;
             $total_employee = Employee::count();
-            //employee by status dashboard hr company
+            $explode = explode('-', $datenewdata2);
+            $tahun = $explode[0];
+            $bulan = $explode[1];
+            $absencessTotal = AttendanceHistory::where('status', 0)->whereYear('date', $tahun) ->whereMonth('date', $bulan)->count();
             $jobstatus_tetap = Employee::where('job_status_id', '1')->count();
             $jobstatus_pkwt = Employee::where('job_status_id', '2')->count();
-            //employee by location dashboard hr company
+            $cuti_diambil = TimeOff::count();
+
             $placeofbirth_jakarta = Employee::where('place_of_birth', 'Jakarta')->count();
             $placeofbirth_bandung = Employee::where('place_of_birth', 'Bandung')->count();
             $placeofbirth_padang = Employee::where('place_of_birth', 'Padang')->count();
             $placeofbirth_lainnya = Employee::whereNotIn('place_of_birth', ['Jakarta', 'Bandung', 'Padang'])->count();
         } else {
+            $cuti_diambil = TimeOff::count();
             $datenewdata2 = $date;
             $explode_Date = explode('-', $datenewdata2);
             $tahun = $explode_Date[0];
             $bulan = $explode_Date[1];
+            $absencessTotal = AttendanceHistory::where('status', 0)->whereYear('date', $tahun) ->whereMonth('date', $bulan)->count();
             $total_employee = Employee::whereYear('join_date', $tahun)
                 ->whereMonth('join_date', $bulan)
                 ->count();
+                
             $jobstatus_tetap = Employee::where('job_status_id', '1')
                 ->whereYear('join_date', $tahun)
                 ->whereMonth('join_date', $bulan)
@@ -267,6 +270,7 @@ class EmployeeController extends Controller
                 ->whereYear('join_date', $tahun)
                 ->whereMonth('join_date', $bulan)
                 ->count();
+                
             //employee by location dashboard hr company
             $placeofbirth_jakarta = Employee::where('place_of_birth', 'Jakarta')
                 ->whereYear('join_date', $tahun)
@@ -280,16 +284,48 @@ class EmployeeController extends Controller
         }
 
         //masa kerja
-        $averageTenureInYears = Employee::selectRaw('AVG(DATEDIFF(NOW(), join_date) / 365.25) AS average_tenure')->value('average_tenure');
-
+        $averageTenureInYears = Employee::selectRaw('AVG(DATEDIFF(NOW(), join_date) / 365) AS average_tenure')->value('average_tenure');
         $years = floor($averageTenureInYears);
         $days = ($averageTenureInYears - $years) * 365;
         $weeks = floor($days / 7);
         $days = $days % 7;
 
-        // $formattedTenure = "{$years} tahun {$weeks} minggu";
-        $formattedTenure = "{$years} tahun";
+        $formattedTenure = "{$years} Years";
+        $employees = Employee::all();
 
+// Inisialisasi total masa kerja dan jumlah karyawan
+$employees = Employee::all();
+
+// Inisialisasi total masa kerja dan jumlah karyawan
+$totalYears = 0;
+$totalEmployees = $employees->count();
+
+// Loop melalui setiap karyawan
+foreach ($employees as $employee) {
+    // Periksa apakah karyawan memiliki tanggal join
+    if ($employee->join_date) {
+        try {
+            // Coba parse tanggal join
+            $employeeJoinDate = $employee->join_date;
+
+            // Hitung masa kerja untuk karyawan ini
+            $employeeYears = $employeeJoinDate->diffInYears(Carbon::now());
+
+            // Tambahkan masa kerja karyawan ke total
+            $totalYears += $employeeYears;
+        } catch (\Exception $e) {
+            // Tangani kesalahan jika parsing tanggal gagal
+            // Anda dapat menambahkan pesan kesalahan atau tindakan lain sesuai kebutuhan
+            continue; // Lewati karyawan ini dan lanjutkan dengan yang lain
+        }
+    }
+}
+// Hitung rata-rata masa kerja
+$averageYears = ($totalEmployees > 0) ? $totalYears / $totalEmployees : 0;
+$formattedTenure = "{$averageYears} Years";
+// dd($averageYears);
+        
+        // $formattedTenure = "{$years} tahun {$weeks} minggu";
         //employee year of service
         // $employee = Employee::findOrFail($total_employee); // Ganti ini dengan cara Anda mendapatkan data karyawan
         // $joinDate = new Carbon($employee->join_date); // Konversi tanggal masuk ke objek Carbon
@@ -353,8 +389,6 @@ class EmployeeController extends Controller
             $percent_pkwt = round(($jobstatus_pkwt / $total_employee) * 100);
         }
 
-
-
         if ($total_employee === 0) {
             $percent_jakarta = 0;
             $percent_bandung = 0;
@@ -367,28 +401,34 @@ class EmployeeController extends Controller
             $percent_lainnya = round(($placeofbirth_lainnya / $total_employee) * 100, 2);
         }
 
-        $directorat_it_comp = Employee::where('directorate_id', '1')
-            ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
+        $directorat_it_comp = Employee::where('directorate_id', 1)
+            ->whereYear('join_date', '=', date('Y', strtotime($datenewdata2)))
+            ->whereMonth('join_date', '=', date('n', strtotime($datenewdata2)))
             ->count();
 
         $directorat_finance_comp = Employee::where('directorate_id', '2')
-            ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
+            ->whereYear('join_date', '=', date('Y', strtotime($datenewdata2)))
+            ->whereMonth('join_date', '=', date('n', strtotime($datenewdata2)))
             ->count();
 
         $directorat_marketing_comp = Employee::where('directorate_id', '3')
-            ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
+            ->whereYear('join_date', '=', date('Y', strtotime($datenewdata2)))
+            ->whereMonth('join_date', '=', date('n', strtotime($datenewdata2)))
             ->count();
 
 
         //employee by division dashboard hr company
         $division_sa_comp = Employee::where('division_id', '1')
-            ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
+            ->whereYear('join_date', '=', date('Y', strtotime($datenewdata2)))
+            ->whereMonth('join_date', '=', date('n', strtotime($datenewdata2)))
             ->count();
         $division_dpi_comp = Employee::where('division_id', '2')
-            ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
+            ->whereYear('join_date', '=', date('Y', strtotime($datenewdata2)))
+            ->whereMonth('join_date', '=', date('n', strtotime($datenewdata2)))
             ->count();
         $division_operation_comp = Employee::where('division_id', '3')
-            ->whereDate(DB::raw('DATE_FORMAT(join_date, "%y-%d")'), $datenewdata2)
+            ->whereYear('join_date', '=', date('Y', strtotime($datenewdata2)))
+            ->whereMonth('join_date', '=', date('n', strtotime($datenewdata2)))
             ->count();
 
         //employee by old dashboard hr company
@@ -428,10 +468,12 @@ class EmployeeController extends Controller
                 array_push($lebih50, $age->Age);
             }
         }
-        
 
+        // echo json_encode($directorat_it_comp); die();
 
         return view('dashboard2', [
+            'cuti_diambil' => $cuti_diambil,
+            'absencessTotal'  =>$absencessTotal,
             'total_employees' => $total_employee,
             'masa_kerja' => $formattedTenure,
             'employee_pria' => $employee_pria,
