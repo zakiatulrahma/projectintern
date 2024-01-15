@@ -41,10 +41,6 @@
     <!-- Helpers -->
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
 
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
-    <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('assets/js/config.js') }}"></script>
 </head>
 
@@ -167,7 +163,7 @@
                                 <div class="card drag-item cursor-move mb-lg-0 mb-4">
                                     <div class="card-body text-center">
                                         <h5>Absences</h5>
-                                        <h4>50 Hari</h4>
+                                        <h4>{{ $absencessTotal }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +171,7 @@
                                 <div class="card drag-item cursor-move mb-lg-0 mb-4">
                                     <div class="card-body text-center">
                                         <h5>Leave Taken</h5>
-                                        <h4>67</h4>
+                                        <h4>{{ $cuti_diambil }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -183,8 +179,8 @@
                         <!-- /Cards Draggable ends -->
 
                         <!-- Website Analytics-->
-                        <div class="row mb-4" id="sortable-cards">
-                            <div class="col-6 mb-4">
+                        <div class="row mb-4 " id="sortable-cards">
+                            <div class="col-lg-6 mb-4">
                                 <div class="card">
                                     <div
                                         class="card-header d-flex justify-content-between align-items-md-center align-items-start">
@@ -221,13 +217,13 @@
                                             data-height="350"></canvas>
                                         <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
                                             <li class="ct-series-0 d-flex flex-column">
-                                                <h6 class="mb-0 fw-bold">Pria</h6>
+                                                <h6 class="mb-0 fw-bold">Male</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
                                                     style="background-color: #28dac6; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_pria }}%</div>
                                             </li>
                                             <li class="ct-series-1 d-flex flex-column">
-                                                <h6 class="mb-0 fw-bold">Wanita</h6>
+                                                <h6 class="mb-0 fw-bold">Female</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
                                                     style="background-color: #FDAC34; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_wanita }}%</div>
@@ -239,7 +235,7 @@
                             <!-- /Doughnut Chart -->
 
                             <!-- Doughnut Chart -->
-                            <div class="col-lg-4 col-12 ">
+                            <div class="col-lg-4 col-12 mb-4 inline-block">
                                 <div class="card">
                                     <h5 class="card-header">Leave Taken by Category</h5>
                                     <div class="card-body">
@@ -247,19 +243,19 @@
                                             data-height="350"></canvas>
                                         <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
                                             <li class="ct-series-0 d-flex flex-column">
-                                                <h6 class="mb-0 fw-bold">Cuti</h6>
+                                                <h6 class="mb-0 fw-bold">Leave</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
                                                     style="background-color: #28dac6; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_cuti }}%</div>
                                             </li>
                                             <li class="ct-series-1 d-flex flex-column">
-                                                <h6 class="mb-0 fw-bold">Izin</h6>
+                                                <h6 class="mb-0 fw-bold">Permission</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
                                                     style="background-color: #FDAC34; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_izin }}%</div>
                                             </li>
                                             <li class="ct-series-2 d-flex flex-column">
-                                                <h6 class="mb-0 fw-bold">Lainnya</h6>
+                                                <h6 class="mb-0 fw-bold">Other</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
                                                     style="background-color: #299AFF; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_timeoff }}%</div>
@@ -279,7 +275,7 @@
                                             data-height="350"></canvas>
                                         <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 pt-1">
                                             <li class="ct-series-0 d-flex flex-column">
-                                                <h6 class="mb-0 fw-bold">Tetap</h6>
+                                                <h6 class="mb-0 fw-bold">Permanent</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
                                                     style="background-color: #28dac6; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_tetap }}%</div>
@@ -337,7 +333,7 @@
                                                 <div class="text-muted">{{ $percent_padang }}%</div>
                                             </li>
                                             <li class="ct-series-1 d-flex flex-column">
-                                                <h6 class="mb-0 fw-bold">Lainnya</h6>
+                                                <h6 class="mb-0 fw-bold">Other</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
                                                     style="background-color: #ffe800; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_lainnya }}%</div>
@@ -378,7 +374,7 @@
                             </div>
 
                             <!-- Website Analytics-->
-                            <div class="col-lg-12 mb-4 col-md-12">
+                            {{-- <div class="col-lg-12 mb-4 col-md-12">
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5 class="card-title mb-0">-</h5>
@@ -389,7 +385,8 @@
                                         <div id="analyticsBarChartUsia1C"></div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
+
                         </div>
                         <!-- / Content -->
                         <div class="content-backdrop fade"></div>
