@@ -477,7 +477,7 @@
         datasets: [
           {
             data: [placeofbirth_jakarta, placeofbirth_bandung, placeofbirth_padang, placeofbirth_lainnya],
-            backgroundColor: [cyanColor, orangeLightColor, config.colors.primary],
+            backgroundColor: [cyanColor, yellowColor, oceanBlueColor, orangeLightColor, config.colors.primary],
             borderWidth: 0,
             pointStyle: 'rectRounded'
           }

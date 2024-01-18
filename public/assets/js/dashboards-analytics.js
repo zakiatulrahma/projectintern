@@ -476,7 +476,7 @@
       colors: [config.colors.primary, config.colors_label.primary],
       series: [
         {
-          name: '2023',
+          name: 'Employee',
           data: [directorat_it_attend, directorat_finance_attend, directorat_marketing_attend]
         }
       ],
@@ -551,7 +551,7 @@
       colors: [config.colors.primary, config.colors_label.primary],
       series: [
         {
-          name: '2020',
+          name: 'Employee',
           data: [division_sa_attend, division_dpi_attend, division_operation_attend]
         }
       ],
@@ -591,7 +591,7 @@
       tooltip: {
         y: {
           formatter: function (val) {
-            return '$ ' + val + ' thousands';
+            return val ;
           }
         }
       }

@@ -481,12 +481,7 @@ if (typeof barChartElKetidakhadiran2B !== undefined && barChartElKetidakhadiran2
         show: false,
         curve: 'straight'
       },
-      dataLabels: {
-        enabled: true,
-        formatter: function (val, opt) {
-          return parseInt(val) + '%';
-        }
-      },
+    
       legend: {
         show: true,
         position: 'bottom',

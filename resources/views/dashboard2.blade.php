@@ -323,7 +323,7 @@
                                             <li class="ct-series-1 d-flex flex-column">
                                                 <h6 class="mb-0 fw-bold">Bandung</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                                                    style="background-color: #FDAC34; width: 35px; height: 6px"></span>
+                                                    style="background-color: #ffe800 ; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_bandung }}%</div>
                                             </li>
                                             <li class="ct-series-1 d-flex flex-column">
@@ -335,7 +335,7 @@
                                             <li class="ct-series-1 d-flex flex-column">
                                                 <h6 class="mb-0 fw-bold">Other</h6>
                                                 <span class="badge badge-dot my-2 cursor-pointer rounded-pill"
-                                                    style="background-color: #ffe800; width: 35px; height: 6px"></span>
+                                                    style="background-color: #FDAC34; width: 35px; height: 6px"></span>
                                                 <div class="text-muted">{{ $percent_lainnya }}%</div>
                                             </li>
                                         </ul>
@@ -372,21 +372,7 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Website Analytics-->
-                            {{-- <div class="col-lg-12 mb-4 col-md-12">
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="card-title mb-0">-</h5>
-                                        <div class="dropdown">
-                                        </div>
-                                    </div>
-                                    <div class="card-body pb-2">
-                                        <div id="analyticsBarChartUsia1C"></div>
-                                    </div>
-                                </div>
-                            </div> --}}
-
+                            
                         </div>
                         <!-- / Content -->
                         <div class="content-backdrop fade"></div>
