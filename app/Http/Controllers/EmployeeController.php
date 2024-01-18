@@ -14,14 +14,22 @@ class EmployeeController extends Controller
     public function attendance($date = null)
     {
         //total employee dashboard attendance
-        $total_employee = Employee::count();
+
 
         //total employee ontime dashboard attendance
         $latestAttendance = AttendanceHistory::latest()->first();
         if ($date == null) {
             $datenewdata = date('Y-m-d', strtotime($latestAttendance->date));
+            $total_employee = Employee::count();
         } else {
             $datenewdata = $date;
+            $datenewdata2 = $date;
+            $explode_Date = explode('-', $datenewdata2);
+            $tahun = $explode_Date[0];
+            $bulan = $explode_Date[1];
+            $total_employee = Employee::whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)
+                ->count();
         }
         $times = AttendanceHistory::where('status', 1)->whereDate('date', $datenewdata)->pluck('time');
 
