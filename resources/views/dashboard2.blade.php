@@ -369,7 +369,6 @@
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>Employee ID</th>
                                                         <th>Employee Name</th>
                                                         <th>Total Absences</th>
                                                     </tr>
@@ -381,8 +380,7 @@
                                                     @foreach ($top_absents as $employee)
                                                         <tr>
                                                             <td>{{ $counter++ }}</td>
-                                                            <td>{{ $employee->id }}</td>
-                                                            <td>{{ $employee->first_name }} {{ $employee->last_name }}
+                                                            <td>{{ $employee->first_name }}
                                                             </td>
                                                             <td>{{ $employee->total_absences }}</td>
                                                         </tr>
