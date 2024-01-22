@@ -427,21 +427,11 @@ class EmployeeController extends Controller
             }
         }
 
-        // $topEmployees = AttendanceHistory::where('status', 1)
-        //     ->select('employee_id', ('COUNT(*) as total'))
-        //     ->groupBy('employee_id')
-        //     ->orderByDesc('total')
-        //     ->take(5)
-        //     ->get();
-
-
-
         // echo json_encode($averageYears); die();
 
         return view('dashboard2', [
-            // 'topEmployees' => $topEmployees,
             'cuti_diambil' => $cuti_diambil,
-            'absencessTotal'  => $absencessTotal,
+            'absencessTotal' => $absencessTotal,
             'total_employees' => $total_employee,
             'masa_kerja' => $formattedTenure,
             'employee_pria' => $employee_pria,

@@ -361,18 +361,42 @@
 
                             <!-- Website Analytics-->
                             <div class="col-lg-8 mb-4 col-md-12">
-                                <div class="card h-100">
+                                <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5 class="card-title mb-0">Top 5 Employee by Attendance</h5>
-                                        <div class="dropd6own">
+                                        <div class="table">
+                                            <h5 class="card-title mb-0 ">Top 5 Employee by Attendance</h5>
+                                            <table class="table table-bordered mt-3">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Employee Name</th>
+                                                        <th>Total Absences</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php
+                                                        $counter = 1;
+                                                    @endphp
+                                                    @foreach ($top_absents as $employee)
+                                                        <tr>
+                                                            <td>{{ $counter++ }}</td>
+                                                            <td>{{ $employee->first_name }}
+                                                            </td>
+                                                            <td>{{ $employee->total_absences }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
+                                        {{-- <div class="dropd6own">
+                                        </div> --}}
                                     </div>
-                                    <div class="card-body pb-2">
+                                    {{-- <div class="card-body pb-2">
                                         <div id="analyticsBarChartUsia1B"></div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
-                            
+
                         </div>
                         <!-- / Content -->
                         <div class="content-backdrop fade"></div>
