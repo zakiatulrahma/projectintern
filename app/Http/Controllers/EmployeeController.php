@@ -14,22 +14,14 @@ class EmployeeController extends Controller
     public function attendance($date = null)
     {
         //total employee dashboard attendance
-
+        $total_employee = Employee::count();
 
         //total employee ontime dashboard attendance
         $latestAttendance = AttendanceHistory::latest()->first();
         if ($date == null) {
             $datenewdata = date('Y-m-d', strtotime($latestAttendance->date));
-            $total_employee = Employee::count();
         } else {
             $datenewdata = $date;
-            $datenewdata2 = $date;
-            $explode_Date = explode('-', $datenewdata2);
-            $tahun = $explode_Date[0];
-            $bulan = $explode_Date[1];
-            $total_employee = Employee::whereYear('join_date', $tahun)
-                ->whereMonth('join_date', $bulan)
-                ->count();
         }
         $times = AttendanceHistory::where('status', 1)->whereDate('date', $datenewdata)->pluck('time');
 
@@ -96,10 +88,10 @@ class EmployeeController extends Controller
             ->whereNull('checkin')->whereDate('date', $datenewdata)
             ->count();
 
-        //total employee absence by dashboard attendance
-        $absenceCount = AttendanceHistory::where('status', 0)
-            ->whereDate('date', $datenewdata)
-            ->count();
+        // //total employee absence by dashboard attendance
+        // $absenceCount = AttendanceHistory::where('status !=', 0)
+        //     ->whereDate('date', $datenewdata)
+        //     ->count();
 
         //time off employee by dashboard attendance
         $timeoff = Attendance::whereNotNull('time_off_id')
@@ -435,9 +427,19 @@ class EmployeeController extends Controller
             }
         }
 
+        // $topEmployees = AttendanceHistory::where('status', 1)
+        //     ->select('employee_id', ('COUNT(*) as total'))
+        //     ->groupBy('employee_id')
+        //     ->orderByDesc('total')
+        //     ->take(5)
+        //     ->get();
+
+
+
         // echo json_encode($averageYears); die();
 
         return view('dashboard2', [
+            // 'topEmployees' => $topEmployees,
             'cuti_diambil' => $cuti_diambil,
             'absencessTotal'  => $absencessTotal,
             'total_employees' => $total_employee,
