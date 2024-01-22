@@ -426,10 +426,30 @@ class EmployeeController extends Controller
                 array_push($lebih50, $age->Age);
             }
         }
+        //top 5 employee
+        $topAbsentees = AttendanceHistory::select('employee_id', \DB::raw('COUNT(employee_id) as total_absences'))
+            ->where('status', 1)
+            ->groupBy('employee_id')
+            ->orderByRaw('COUNT(employee_id) DESC')
+            ->take(5)
+            ->get();
+        $employeeIds = $topAbsentees->pluck('employee_id')->toArray();
 
+        $topAbsenteesData = Employee::whereIn('id', $employeeIds)
+            ->get()
+            ->map(function ($employee) use ($topAbsentees) {
+                $absences = $topAbsentees->where('employee_id', $employee->id)->first()->total_absences;
+                $employee->total_absences = $absences;
+                return $employee;
+            })
+            ->sortByDesc('total_absences');
+
+
+        // dd($topAbsenteesData);
         // echo json_encode($averageYears); die();
 
         return view('dashboard2', [
+            'top_absents' => $topAbsenteesData,
             'cuti_diambil' => $cuti_diambil,
             'absencessTotal' => $absencessTotal,
             'total_employees' => $total_employee,
