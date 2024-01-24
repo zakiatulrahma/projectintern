@@ -112,6 +112,33 @@ class EmployeeController extends Controller
             })
             ->get();
 
+        // //
+        // $employees = Employee::all();
+
+        // foreach ($employees as $employee) {
+        //     $employee_id = $employee->id;
+
+        //     $attendance_pria = AttendanceHistory::where('status', 1)
+        //         ->where('employee_id', $employee_id)
+        //         ->whereDate('date', $datenewdata)
+        //         ->whereHas('employee', function ($query) {
+        //             $query->where('gender', 'L');
+        //         })
+        //         ->get();
+        // }
+        // foreach ($employees as $employee) {
+        //     $employee_id = $employee->id;
+
+        //     $attendance_wanita = AttendanceHistory::where('status', 1)
+        //         ->where('employee_id', $employee_id)
+        //         ->whereDate('date', $datenewdata)
+        //         ->whereHas('employee', function ($query) {
+        //             $query->where('gender', 'P');
+        //         })
+        //         ->get();
+        // }
+        // //
+
         $count_attendance_pria = $attendance_pria->count();
         $count_attendance_wanita = $attendance_wanita->count();
         $attendance_count = $attendance->count();
@@ -239,8 +266,6 @@ class EmployeeController extends Controller
 
         $old_age = $old_age->get();
 
-
-
         if ($date == null) {
             $datenewdata2 = ($date === null) ? date('Y-m', strtotime($latestAttendance2->date)) : $date;
             $total_employee = Employee::count();
@@ -269,6 +294,8 @@ class EmployeeController extends Controller
             $timeoff_cuti = TimeOff::where('name', 'Cuti Tahunan')->count();
             $timeoff_izin = TimeOff::where('name', 'Izin')->count();
             $timeoff_lainnya = TimeOff::whereNotIn('name', ['Cuti Tahunan', 'Izin'])->count();
+            $topAbsentees = AttendanceHistory::select('employee_id', \DB::raw('COUNT(employee_id) as total_absences'))
+                ->where('status', 1)->groupBy('employee_id')->orderByRaw('COUNT(employee_id) DESC')->take(5)->get();
         } else {
             $cuti_diambil = TimeOff::count();
             $explode_Date = explode('-', $date);
@@ -298,6 +325,9 @@ class EmployeeController extends Controller
             $timeoff_izin = TimeOff::where('name', 'Izin')->whereYear('start_date', $tahun)->whereMonth('start_date', $bulan)->count();
             $timeoff_lainnya = TimeOff::whereNotIn('name', ['Cuti Tahunan', 'Izin'])->whereYear('start_date', $tahun)->whereMonth('start_date', $bulan)->count();
             $timeoff_total = TimeOff::whereYear('start_date', $tahun)->whereMonth('start_date', $bulan)->count();
+            $topAbsentees = AttendanceHistory::select('employee_id', \DB::raw('COUNT(employee_id) as total_absences'))
+                ->where('status', 1)->whereYear('created_at', $tahun)->whereMonth('created_at', $bulan)->groupBy('employee_id')
+                ->orderByRaw('COUNT(employee_id) DESC')->take(5)->get();
         }
 
         // Inisialisasi total masa kerja dan jumlah karyawan
@@ -426,13 +456,8 @@ class EmployeeController extends Controller
                 array_push($lebih50, $age->Age);
             }
         }
-        //top 5 employee
-        $topAbsentees = AttendanceHistory::select('employee_id', \DB::raw('COUNT(employee_id) as total_absences'))
-            ->where('status', 1)
-            ->groupBy('employee_id')
-            ->orderByRaw('COUNT(employee_id) DESC')
-            ->take(5)
-            ->get();
+
+
         $employeeIds = $topAbsentees->pluck('employee_id')->toArray();
 
         $topAbsenteesData = Employee::whereIn('id', $employeeIds)
@@ -445,8 +470,9 @@ class EmployeeController extends Controller
             ->sortByDesc('total_absences');
 
 
-        // dd($topAbsenteesData);
-        // echo json_encode($averageYears); die();
+        // // // dd($topAbsenteesData);
+        // echo json_encode($topAbsentees);
+        // die();
 
         return view('dashboard2', [
             'top_absents' => $topAbsenteesData,

@@ -361,7 +361,7 @@
 
                             <!-- Website Analytics-->
                             <div class="col-lg-8 mb-4 col-md-12">
-                                <div class="card">
+                                <div class="card h-100">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <div class="table">
                                             <h5 class="card-title mb-0 ">Top 5 Employee by Attendance</h5>
