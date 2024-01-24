@@ -129,10 +129,10 @@ class EmployeeController extends Controller
             ->whereNull('checkin')->whereDate('date', $datenewdata)
             ->count();
 
-        //total employee absence by dashboard attendance
-        $absenceCount = AttendanceHistory::where('status', 0)
-            ->whereDate('date', $datenewdata)
-            ->count();
+        // //total employee absence by dashboard attendance
+        // $absenceCount = AttendanceHistory::where('status !=', 0)
+        //     ->whereDate('date', $datenewdata)
+        //     ->count();
 
         //time off employee by dashboard attendance
         $timeoff = Attendance::whereNotNull('time_off_id')
