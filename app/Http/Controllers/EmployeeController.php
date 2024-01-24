@@ -14,14 +14,55 @@ class EmployeeController extends Controller
     public function attendance($date = null)
     {
         //total employee dashboard attendance
-        $total_employee = Employee::count();
 
+        $employees = Employee::all();
+        $employeeIds = $employees->pluck('id');
         //total employee ontime dashboard attendance
         $latestAttendance = AttendanceHistory::latest()->first();
         if ($date == null) {
             $datenewdata = date('Y-m-d', strtotime($latestAttendance->date));
+            $total_employee = Employee::count();
+            $currentDateTime = Carbon::now();
+            $formattedDate = $currentDateTime->format('Y-m-d');
+            $attendance_pria = AttendanceHistory::where('status', 1)
+                ->whereIn('employee_id', $employeeIds)
+                ->whereDate('date', $formattedDate)
+                ->whereHas('employee', function ($query) {
+                    $query->where('gender', 'L');
+                })
+                ->get();
+
+            $attendance_wanita = AttendanceHistory::where('status', 1)
+                ->whereIn('employee_id', $employeeIds)
+                ->whereDate('date', $formattedDate)
+                ->whereHas('employee', function ($query) {
+                    $query->where('gender', 'P');
+                })
+                ->get();
         } else {
             $datenewdata = $date;
+            $datenewdata2 = $date;
+            $explode_Date = explode('-', $datenewdata2);
+            $tahun = $explode_Date[0];
+            $bulan = $explode_Date[1];
+            $total_employee = Employee::whereYear('join_date', $tahun)
+                ->whereMonth('join_date', $bulan)
+                ->count();
+            $attendance_pria = AttendanceHistory::where('status', 1)
+                ->whereIn('employee_id', $employeeIds)
+                ->whereDate('date', $datenewdata)
+                ->whereHas('employee', function ($query) {
+                    $query->where('gender', 'L');
+                })
+                ->get();
+
+            $attendance_wanita = AttendanceHistory::where('status', 1)
+                ->whereIn('employee_id', $employeeIds)
+                ->whereDate('date', $datenewdata)
+                ->whereHas('employee', function ($query) {
+                    $query->where('gender', 'P');
+                })
+                ->get();
         }
         $times = AttendanceHistory::where('status', 1)->whereDate('date', $datenewdata)->pluck('time');
 
@@ -98,19 +139,6 @@ class EmployeeController extends Controller
             ->whereDate('date', $datenewdata)->count();
 
         //attendance by gender by dashboard attendance
-        $attendance_pria = AttendanceHistory::where('status', 1)
-            ->whereDate('date', $datenewdata)
-            ->whereHas('employee', function ($query) {
-                $query->where('gender', 'L');
-            })
-            ->get();
-
-        $attendance_wanita = AttendanceHistory::where('status', 1)
-            ->whereDate('date', $datenewdata)
-            ->whereHas('employee', function ($query) {
-                $query->where('gender', 'P');
-            })
-            ->get();
 
         // //
         // $employees = Employee::all();
@@ -141,10 +169,12 @@ class EmployeeController extends Controller
 
         $count_attendance_pria = $attendance_pria->count();
         $count_attendance_wanita = $attendance_wanita->count();
+        // dd($count_attendance_pria, $count_attendance_wanita);
         $attendance_count = $attendance->count();
         if ($attendance_count === 0) {
             $percent_pria = 0;
             $percent_wanita = 0;
+            // dd($percent_pria);
         } else {
             $percent_pria = round(($count_attendance_pria / $attendance_count) * 100);
             $percent_wanita = round(($count_attendance_wanita / $attendance_count) * 100);
