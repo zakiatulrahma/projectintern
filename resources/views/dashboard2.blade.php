@@ -147,7 +147,7 @@
                                 <div class="card drag-item cursor-move mb-lg-0 mb-4">
                                     <div class="card-body text-center">
                                         <h5>Headcount</h5>
-                                        <h4>{{ $total_employees }}</h4>
+                                        <h4 class="fs-5">{{ $total_employees }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -155,7 +155,7 @@
                                 <div class="card drag-item cursor-move mb-lg-0 mb-4">
                                     <div class="card-body text-center">
                                         <h5>Avg Tenure</h5>
-                                        <h4>{{ $masa_kerja }}</h4>
+                                        <h4 class="fs-5">{{ $masa_kerja }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +163,7 @@
                                 <div class="card drag-item cursor-move mb-lg-0 mb-4">
                                     <div class="card-body text-center">
                                         <h5>Absences</h5>
-                                        <h4>{{ $absencessTotal }}</h4>
+                                        <h4 class="fs-5">{{ $absencessTotal }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -171,7 +171,7 @@
                                 <div class="card drag-item cursor-move mb-lg-0 mb-4">
                                     <div class="card-body text-center">
                                         <h5>Leave Taken</h5>
-                                        <h4>{{ $cuti_diambil }}</h4>
+                                        <h4 class="fs-5">{{ $cuti_diambil }}</h4>
                                     </div>
                                 </div>
                             </div>

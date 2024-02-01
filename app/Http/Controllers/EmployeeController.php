@@ -8,61 +8,20 @@ use Carbon\Carbon;
 use App\Models\Employee;
 use App\Models\AttendanceHistory;
 use App\Models\TimeOff;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
     public function attendance($date = null)
     {
-        //total employee dashboard attendance
+        $total_employee = Employee::count();
 
-        $employees = Employee::all();
-        $employeeIds = $employees->pluck('id');
         //total employee ontime dashboard attendance
         $latestAttendance = AttendanceHistory::latest()->first();
         if ($date == null) {
             $datenewdata = date('Y-m-d', strtotime($latestAttendance->date));
-            $total_employee = Employee::count();
-            $currentDateTime = Carbon::now();
-            $formattedDate = $currentDateTime->format('Y-m-d');
-            $attendance_pria = AttendanceHistory::where('status', 1)
-                ->whereIn('employee_id', $employeeIds)
-                ->whereDate('date', $formattedDate)
-                ->whereHas('employee', function ($query) {
-                    $query->where('gender', 'L');
-                })
-                ->get();
-
-            $attendance_wanita = AttendanceHistory::where('status', 1)
-                ->whereIn('employee_id', $employeeIds)
-                ->whereDate('date', $formattedDate)
-                ->whereHas('employee', function ($query) {
-                    $query->where('gender', 'P');
-                })
-                ->get();
         } else {
             $datenewdata = $date;
-            $datenewdata2 = $date;
-            $explode_Date = explode('-', $datenewdata2);
-            $tahun = $explode_Date[0];
-            $bulan = $explode_Date[1];
-            $total_employee = Employee::whereYear('join_date', $tahun)
-                ->whereMonth('join_date', $bulan)
-                ->count();
-            $attendance_pria = AttendanceHistory::where('status', 1)
-                ->whereIn('employee_id', $employeeIds)
-                ->whereDate('date', $datenewdata)
-                ->whereHas('employee', function ($query) {
-                    $query->where('gender', 'L');
-                })
-                ->get();
-
-            $attendance_wanita = AttendanceHistory::where('status', 1)
-                ->whereIn('employee_id', $employeeIds)
-                ->whereDate('date', $datenewdata)
-                ->whereHas('employee', function ($query) {
-                    $query->where('gender', 'P');
-                })
-                ->get();
         }
         $times = AttendanceHistory::where('status', 1)->whereDate('date', $datenewdata)->pluck('time');
 
@@ -100,6 +59,17 @@ class EmployeeController extends Controller
             return ($value >= $upperBound);
         }));
 
+
+        //total employee no checkin by dashboard attendances
+        $nocheckin = Attendance::whereNotNull('checkout')
+            ->whereNull('checkin')->whereDate('date', $datenewdata)
+            ->count();
+
+
+        //time off employee by dashboard attendance
+        $timeoff = Attendance::whereNotNull('time_off_id')
+            ->whereDate('date', $datenewdata)->count();
+
         $attendanceRecord = Attendance::groupBy('date')->selectRaw("date, sum(case when time_off_id is not null then 1 else 0 end) as time_off,
         sum(case when checkin >= '08:00:00' and checkin <= '09:15:00' and time_off_id is null then 1 else 0 end ) as on_time,
         sum(case when checkin > '09:15:00' and time_off_id is null then 1 else 0 end ) as late_in,
@@ -124,57 +94,30 @@ class EmployeeController extends Controller
         }
         // dd($attendanceRecord);
 
-        //total employee no checkin by dashboard attendances
-        $nocheckin = Attendance::whereNotNull('checkout')
-            ->whereNull('checkin')->whereDate('date', $datenewdata)
-            ->count();
-
-        // //total employee absence by dashboard attendance
-        // $absenceCount = AttendanceHistory::where('status !=', 0)
-        //     ->whereDate('date', $datenewdata)
-        //     ->count();
-
-        //time off employee by dashboard attendance
-        $timeoff = Attendance::whereNotNull('time_off_id')
-            ->whereDate('date', $datenewdata)->count();
 
         //attendance by gender by dashboard attendance
+        $attendance_pria = AttendanceHistory::where('status', 1)
+            ->whereDate('date', $datenewdata)
+            ->whereHas('employee', function ($query) {
+                $query->where('gender', 'L');
+            })
+            ->get();
 
-        // //
-        // $employees = Employee::all();
-
-        // foreach ($employees as $employee) {
-        //     $employee_id = $employee->id;
-
-        //     $attendance_pria = AttendanceHistory::where('status', 1)
-        //         ->where('employee_id', $employee_id)
-        //         ->whereDate('date', $datenewdata)
-        //         ->whereHas('employee', function ($query) {
-        //             $query->where('gender', 'L');
-        //         })
-        //         ->get();
-        // }
-        // foreach ($employees as $employee) {
-        //     $employee_id = $employee->id;
-
-        //     $attendance_wanita = AttendanceHistory::where('status', 1)
-        //         ->where('employee_id', $employee_id)
-        //         ->whereDate('date', $datenewdata)
-        //         ->whereHas('employee', function ($query) {
-        //             $query->where('gender', 'P');
-        //         })
-        //         ->get();
-        // }
-        // //
+        $attendance_wanita = AttendanceHistory::where('status', 1)
+            ->whereDate('date', $datenewdata)
+            ->whereHas('employee', function ($query) {
+                $query->where('gender', 'P');
+            })
+            ->get();
 
         $count_attendance_pria = $attendance_pria->count();
         $count_attendance_wanita = $attendance_wanita->count();
-        // dd($count_attendance_pria, $count_attendance_wanita);
         $attendance_count = $attendance->count();
+
+
         if ($attendance_count === 0) {
             $percent_pria = 0;
             $percent_wanita = 0;
-            // dd($percent_pria);
         } else {
             $percent_pria = round(($count_attendance_pria / $attendance_count) * 100);
             $percent_wanita = round(($count_attendance_wanita / $attendance_count) * 100);
@@ -185,22 +128,17 @@ class EmployeeController extends Controller
             ->get();
 
         //absence by gender dashboard attendance
-        $absence_pria = AttendanceHistory::where('status', 0)
-            ->whereDate('date', $datenewdata)
-            ->whereHas('employee', function ($query) {
-                $query->where('gender', 'L');
-            })
-            ->get();
-        $absence_wanita = AttendanceHistory::where('status', 0)
-            ->whereDate('date', $datenewdata)
-            ->whereHas('employee', function ($query) {
-                $query->where('gender', 'P');
-            })
-            ->get();
+        $presentAttendance = collect(AttendanceHistory::whereDate('date', $datenewdata)->distinct()->pluck('employee_id')->values()->toArray());
+
+        $absence_pria = Employee::whereNotIn('id', $presentAttendance)->where('gender', 'L')->get();
+        $absence_wanita = Employee::whereNotIn('id', $presentAttendance)->where('gender', 'P')->get();
+        $absence_total = Employee::whereNotIn('id', $presentAttendance)->get();
+
         $count_absence_pria = $absence_pria->count();
         $count_absence_wanita = $absence_wanita->count();
-        $absence_count = $attendance_absen->count();
-        if ($absence_count === 0) {
+        $absence_count = $absence_total->count();
+
+        if ($absence_count == 0) {
             $percent_absencepria = 0;
             $percent_absencewanita = 0;
         } else {
@@ -324,7 +262,7 @@ class EmployeeController extends Controller
             $timeoff_cuti = TimeOff::where('name', 'Cuti Tahunan')->count();
             $timeoff_izin = TimeOff::where('name', 'Izin')->count();
             $timeoff_lainnya = TimeOff::whereNotIn('name', ['Cuti Tahunan', 'Izin'])->count();
-            $topAbsentees = AttendanceHistory::select('employee_id', \DB::raw('COUNT(employee_id) as total_absences'))
+            $topAbsentees = AttendanceHistory::select('employee_id', DB::raw('COUNT(employee_id) as total_absences'))
                 ->where('status', 1)->groupBy('employee_id')->orderByRaw('COUNT(employee_id) DESC')->take(5)->get();
         } else {
             $cuti_diambil = TimeOff::count();
@@ -355,7 +293,7 @@ class EmployeeController extends Controller
             $timeoff_izin = TimeOff::where('name', 'Izin')->whereYear('start_date', $tahun)->whereMonth('start_date', $bulan)->count();
             $timeoff_lainnya = TimeOff::whereNotIn('name', ['Cuti Tahunan', 'Izin'])->whereYear('start_date', $tahun)->whereMonth('start_date', $bulan)->count();
             $timeoff_total = TimeOff::whereYear('start_date', $tahun)->whereMonth('start_date', $bulan)->count();
-            $topAbsentees = AttendanceHistory::select('employee_id', \DB::raw('COUNT(employee_id) as total_absences'))
+            $topAbsentees = AttendanceHistory::select('employee_id', DB::raw('COUNT(employee_id) as total_absences'))
                 ->where('status', 1)->whereYear('created_at', $tahun)->whereMonth('created_at', $bulan)->groupBy('employee_id')
                 ->orderByRaw('COUNT(employee_id) DESC')->take(5)->get();
         }
@@ -363,8 +301,10 @@ class EmployeeController extends Controller
         // Inisialisasi total masa kerja dan jumlah karyawan
         $employees = Employee::all();
         // Inisialisasi total masa kerja dan jumlah karyawan
-        $totalYears = 0;
+        $totalMonths = 0;
+        $totalDays = 0;
         $totalEmployees = $employees->count();
+
         // Loop melalui setiap karyawan
         foreach ($employees as $employee) {
             // Periksa apakah karyawan memiliki tanggal join
@@ -372,25 +312,29 @@ class EmployeeController extends Controller
                 try {
                     // Coba parse tanggal join
                     $employeeJoinDate = $employee->join_date;
+
                     // Hitung masa kerja untuk karyawan ini
-                    $employeeYears = $employeeJoinDate->diffInYears(Carbon::now());
+                    $employeeJoinDateWithTime = Carbon::parse($employeeJoinDate);
+                    $now = Carbon::now();
+
+                    $employeeMonths = $employeeJoinDateWithTime->diffInMonths($now);
+                    $employeeDays = $employeeJoinDateWithTime->diffInDays($now);
+
                     // Tambahkan masa kerja karyawan ke total
-                    $totalYears += $employeeYears;
+                    $totalMonths += $employeeMonths;
+                    $totalDays += $employeeDays;
                 } catch (\Exception $e) {
-                    // Tangani kesalahan jika parsing tanggal gagal
-                    // Anda dapat menambahkan pesan kesalahan atau tindakan lain sesuai kebutuhan
-                    continue; // Lewati karyawan ini dan lanjutkan dengan yang lain
+                    continue;
                 }
             }
         }
-        // Hitung rata-rata masa kerja
-        $averageYears = ($totalEmployees > 0) ? $totalYears / $totalEmployees : 0;
-        $formattedTenure = "{$averageYears} Years";
 
-        // Memformat rata-rata masa kerja dengan 2 digit di belakang koma
-        $formattedAverageYears = number_format($averageYears, 2);
-        // Format hasil masa kerja rata-rata
-        $formattedTenure = "{$formattedAverageYears} Years";
+        // Hitung rata-rata masa kerja
+        $averageMonths = floor($totalMonths / $totalEmployees);
+        $remainingDays = $totalDays % 30; // Ambil sisa hari setelah dikonversi ke bulan
+
+        // Format hasil
+        $formattedTenure = "{$averageMonths} Months {$remainingDays} Days";
 
         //employee by gender dashboard hr company
 
